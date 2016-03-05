@@ -43,7 +43,22 @@
                 conn.onopen = function(e) {
                     console.log("Connection established!");
                     $('.output').append('<p>Connection established!</p>');
+                    clearAlert();
                 };
+
+                // handle connection errors / slow connections
+                var timeoutID = window.setTimeout(slowAlert, 5000);
+                function slowAlert() {
+                    $('.output').append('<p>Slow connection... (did you do `php chat-server.php` ?)</p>');
+                }
+                function clearAlert() {
+                    window.clearTimeout(timeoutID);
+                }
+                conn.onerror = function(e) {
+                    console.log('Websockets error:');
+                    console.log(e);
+                    $('.output').append('<p>We got an error... (did you do `php chat-server.php` ?)</p>');
+                }
 
                 // listen for events
                 conn.onmessage = function(e) {
