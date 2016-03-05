@@ -4,18 +4,32 @@
     <meta charset="UTF-8">
     <title>Instant Chat!</title>
     <style>
+        .clearfix:after {
+            visibility: hidden;
+            display: block;
+            font-size: 0;
+            content: " ";
+            clear: both;
+            height: 0;
+        }
+        * html .clearfix             { zoom: 1; } /* IE6 */
+        *:first-child+html .clearfix { zoom: 1; } /* IE7 */
+        .float-left { float: left; }
+        .clear {
+            float: none;
+            clear: both;
+        }
+    </style>
+    <style>
         body { height: 100%; }
         .output {
             border: 10px black solid;
             height: 90vh;
             margin-bottom: 2vh;
         }
-        .input input {
-            float: left;
-        }
-        .message {
-            width: 90%;
-        }
+        .message { width: 90%; }
+        .game { width: 80%; }
+        .chat { width: 20%; }
     </style>
     <script src="//code.jquery.com/jquery-2.2.1.min.js"></script>
     <script>
@@ -49,12 +63,18 @@
     </script>
 </head>
 <body>
-<div class="output"></div>
-<div class="input">
-    <form>
-        <input type="text" name="message" class="message"/>
-        <input type="submit" class="send-button" value="Send">
-    </form>
-</div>
+<form>
+    <div class="game float-left">
+        Placeholder
+    </div>
+    <div class="chat float-left">
+        <div class="output"></div>
+    </div>
+    <div class="clear"></div>
+    <div class="input">
+        <input type="text" name="message" class="float-left message"/>
+        <input type="submit" class="float-left send-button" value="Send">
+    </div>
+</form>
 </body>
 </html>
