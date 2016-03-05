@@ -51,17 +51,18 @@
         (function($) {
             $(document).ready(function() {
                 $('.connect-button').click(function() {
-                    // establish connection
-                    $('.output').append('<p>Connecting...</p>');
-                    
-                    // We are using wss:// as the protocol because Cloud9 is using
-                    // HTTPS. In case you try to run this, using HTTP, make sure
-                    // to change this to ws:// .
+                    // build websocket URL
                     var ws_url = 'wss://' + ws_host;
+                    if (window.location.protocol == "http:") {
+                        ws_url = 'ws://' + ws_host;
+                    }
                     if (ws_port != '80' && ws_port.length > 0) {
-                    ws_url += ':' + ws_port;
+                        ws_url += ':' + ws_port;
                     }
                     ws_url += ws_folder + ws_path;
+
+                    // establish connection
+                    $('.output').append('<p>Connecting...</p>');
                     conn = new WebSocket(ws_url);
                     conn.onopen = function(e) {
                         console.log("Connection established!");
