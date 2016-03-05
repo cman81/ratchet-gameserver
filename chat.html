@@ -22,14 +22,17 @@
     </style>
     <style>
         body { height: 100%; }
+        .operations, .input { height: 5vh; }
         .output {
-            border: 10px black solid;
-            height: 90vh;
+            border: 1px black solid;
+            height: 80vh;
             margin-bottom: 2vh;
+            padding: 5px;
         }
         .message { width: 90%; }
         .game { width: 80%; }
         .chat { width: 20%; }
+        .input { display: none; }
     </style>
     <script src="//code.jquery.com/jquery-2.2.1.min.js"></script>
     <script>
@@ -37,35 +40,41 @@
 
         (function($) {
             $(document).ready(function() {
-                // establish connection
-                $('.output').append('<p>Connecting...</p>');
-                var conn = new WebSocket('ws://vm:8080');
-                conn.onopen = function(e) {
-                    console.log("Connection established!");
-                    $('.output').append('<p>Connection established!</p>');
-                    clearAlert();
-                };
+                $('.connect-button').click(function() {
+                    // establish connection
+                    $('.output').append('<p>Connecting...</p>');
+                    var conn = new WebSocket('ws://vm:8080');
+                    conn.onopen = function(e) {
+                        console.log("Connection established!");
+                        $('.output').append('<p>Connection established!</p>');
+                        clearAlert();
+                        $('.input').show();
+                    };
 
-                // handle connection errors / slow connections
-                var timeoutID = window.setTimeout(slowAlert, 5000);
-                function slowAlert() {
-                    $('.output').append('<p>Slow connection... (did you do `php chat-server.php` ?)</p>');
-                }
-                function clearAlert() {
-                    window.clearTimeout(timeoutID);
-                }
-                conn.onerror = function(e) {
-                    console.log('Websockets error:');
-                    console.log(e);
-                    $('.output').append('<p>We got an error... (did you do `php chat-server.php` ?)</p>');
-                }
+                    // handle connection errors / slow connections
+                    var timeoutID = window.setTimeout(slowAlert, 5000);
+                    function slowAlert() {
+                        $('.output').append('<p>Slow connection... (did you do `php chat-server.php` ?)</p>');
+                    }
+                    function clearAlert() {
+                        window.clearTimeout(timeoutID);
+                    }
+                    conn.onerror = function(e) {
+                        console.log('Websockets error:');
+                        console.log(e);
+                        $('.output').append('<p>We got an error... (did you do `php chat-server.php` ?)</p>');
+                    }
 
-                // listen for events
-                conn.onmessage = function(e) {
-                    var response = JSON.parse(e.data);
-                    console.log(response);
-                    $('.output').append('<p>Them: ' + response.chat + '</p>'); // receive message
-                };
+                    // listen for events
+                    conn.onmessage = function(e) {
+                        var response = JSON.parse(e.data);
+                        console.log(response);
+                        $('.output').append('<p>Them: ' + response.chat + '</p>'); // receive message
+                    };
+
+                    $(this).hide();
+                });
+
 
                 // send out events
                 $('.send-button').click(function(ev) {
@@ -81,6 +90,9 @@
 </head>
 <body>
 <form>
+    <div class="operations">
+        <input type="button" value="Connect" class="connect-button" />
+    </div>
     <div class="game float-left">
         Placeholder
     </div>
@@ -89,8 +101,8 @@
     </div>
     <div class="clear"></div>
     <div class="input">
-        <input type="text" name="message" class="float-left message"/>
-        <input type="submit" class="float-left send-button" value="Send">
+        <input type="text" name="message" class="float-left message" />
+        <input type="submit" class="float-left send-button" value="Send" />
     </div>
 </form>
 </body>
