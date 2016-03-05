@@ -47,14 +47,16 @@
 
                 // listen for events
                 conn.onmessage = function(e) {
-                    $('.output').append('<p>Them: ' + e.data + '</p>'); // receive message
+                    var response = JSON.parse(e.data);
+                    console.log(response);
+                    $('.output').append('<p>Them: ' + response.chat + '</p>'); // receive message
                 };
 
                 // send out events
                 $('.send-button').click(function(ev) {
                     ev.preventDefault();
                     $('.output').append('<p>Me: ' + $('.message').val() + '</p>'); // output message on our screen
-                    conn.send($('.message').val()); // broadcast message
+                    conn.send(JSON.stringify({"chat": $('.message').val()})); // broadcast message
                     $('.message').val(''); // clear buffer
                 });
             });
