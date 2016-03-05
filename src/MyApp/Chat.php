@@ -129,6 +129,7 @@ class Chat implements MessageComponentInterface {
                         'alias' => $this->aliases[$from->resourceId],
                         'score' => 0,
                         'choice' => FALSE,
+                        'is_ready' => TRUE,
                     );
                     $this->game['lastupdated'] = time();
                     echo $this->aliases[$from->resourceId] . " joined the game as Player {$key}\n";
@@ -144,9 +145,11 @@ class Chat implements MessageComponentInterface {
                 return;
             }
         }
-        $msg = json_encode(apply_mask($this->game, $from->resourceId));
-        echo "Passing the following information to " . $this->aliases[$from->resourceId] . ": " . $msg . "\n";
-        $from->send($msg);
+        foreach ($this->clients as $client) {
+            $msg = json_encode(array('game' => apply_mask($this->game, $client->resourceId)));
+            echo "Passing the following information to " . $this->aliases[$client->resourceId] . ": " . $msg . "\n";
+            $client->send($msg);
+        }
     }
 }
 
@@ -164,9 +167,15 @@ function is_invalid_login($username, $aliases) {
  * In certain games, information must be hidden from the player
  */
 function apply_mask($gamestate, $this_player) {
+    $gamestate['is_you_ready'] = FALSE;
+    $gamestate['is_opponents_ready'] = TRUE;
     foreach($gamestate['players'] as $key => $player) {
         if ($player['id'] == $this_player) {
+            $gamestate['is_you_ready'] = $player['is_ready'];
             continue;
+        }
+        if (!$player['is_ready']) {
+            $gamestate['is_opponents_ready'] = FALSE;
         }
         if (isset($player['choice']) && $player['choice'] != FALSE) {
             $gamestate[$key]['choice'] = 'HIDDEN';

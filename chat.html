@@ -87,6 +87,17 @@
                         if (typeof(response.gameError) != "undefined" && response.gameError !== null) {
                             $('.output').append('<p>There was a problem with your request: ' + response.gameError + '</p>'); // receive message
                         }
+                        if (typeof(response.game) != "undefined" && response.game !== null) {
+                            if (!response.game.players[0] || !response.game.players[1]) {
+                                $('.game').html('Waiting for another player to join.');
+                            } else {
+                                $('.game').html('<p>Score:</p>');
+                                for (var key in response.game.players) {
+                                    var value = response.game.players[key];
+                                    $('.game').append('<p>' + value.alias + ': ' + value.score + '</p>');
+                                }
+                            }
+                        }
                     };
 
                     $('.hide-after-login').hide();
@@ -139,7 +150,7 @@
         <input type="button" value="Logout" class="logout-button" />
     </div>
     <div class="game float-left">
-        Placeholder
+        Welcome to RPS! Rock, Paper, Scissors
     </div>
     <div class="chat float-left">
         <div class="output"></div>
