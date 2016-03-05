@@ -9,6 +9,13 @@ class Chat implements MessageComponentInterface {
     public function __construct() {
         $this->clients = new \SplObjectStorage;
         $this->aliases = array();
+        $this->game = array(
+            'players' => array(
+                FALSE,
+                FALSE,
+            ),
+            'lastupdated' => time(),
+        );
     }
 
     public function onOpen(ConnectionInterface $conn) {
@@ -29,7 +36,10 @@ class Chat implements MessageComponentInterface {
             $this->handle_chat($json['chat'], $from, $msg);
             $is_handled = TRUE;
         }
-
+        if (isset($json['game'])) {
+            $this->handle_game($json['game'], $from);
+            $is_handled = TRUE;
+        }
         // default handler
         if (!$is_handled) {
             $numRecv = count($this->clients) - 1;
@@ -96,6 +106,48 @@ class Chat implements MessageComponentInterface {
             }
         }
     }
+
+    public function handle_game($json, $from) {
+        if ($json['op'] == 'join') {
+            // are we already playing?
+            foreach ($this->game['players'] as $key => $value) {
+                if (isset($value['id']) && ($value['id'] == $from->resourceId)) {
+                    $from->send(json_encode(array(
+                        'gameError' => 'You are already playing!'
+                    )));
+                    echo $this->aliases[$from->resourceId] . " tried joining, but was already playing\n";
+                    return;
+                }
+            }
+            $is_playing = FALSE;
+
+            // take a seat if possible
+            foreach ($this->game['players'] as $key => $value) {
+                if (!$value) {
+                    $this->game['players'][$key] = array(
+                        'id' => $from->resourceId,
+                        'alias' => $this->aliases[$from->resourceId],
+                        'score' => 0,
+                        'choice' => FALSE,
+                    );
+                    $this->game['lastupdated'] = time();
+                    echo $this->aliases[$from->resourceId] . " joined the game as Player {$key}\n";
+                    $is_playing = TRUE;
+                    break;
+                }
+            }
+            if (!$is_playing) {
+                $from->send(json_encode(array(
+                    'gameError' => 'No seats available'
+                )));
+                echo $this->aliases[$from->resourceId] . " tried joining, but was unable to\n";
+                return;
+            }
+        }
+        $msg = json_encode(apply_mask($this->game, $from->resourceId));
+        echo "Passing the following information to " . $this->aliases[$from->resourceId] . ": " . $msg . "\n";
+        $from->send($msg);
+    }
 }
 
 function is_invalid_login($username, $aliases) {
@@ -106,4 +158,19 @@ function is_invalid_login($username, $aliases) {
         return TRUE;
     }
     return FALSE;
+}
+
+/**
+ * In certain games, information must be hidden from the player
+ */
+function apply_mask($gamestate, $this_player) {
+    foreach($gamestate['players'] as $key => $player) {
+        if ($player['id'] == $this_player) {
+            continue;
+        }
+        if (isset($player['choice']) && $player['choice'] != FALSE) {
+            $gamestate[$key]['choice'] = 'HIDDEN';
+        }
+    }
+    return $gamestate;
 }
