@@ -70,12 +70,19 @@
                     conn.onmessage = function(e) {
                         var response = JSON.parse(e.data);
                         console.log(response);
-                        if (typeof(response.login) != "undefined" && response.login !== null) {
+                        if (typeof(response.loginError) != "undefined" && response.loginError !== null) {
                             $('.output').append('<p>Invalid login.</p>'); // receive message
                             $('.hide-after-login').show();
                             $('.logout-button').hide();
-                        } else {
+                        }
+                        if (typeof(response.login) != "undefined" && response.login !== null) {
+                            $('.output').append('<p>' + response.login + ' has logged in.</p>');
+                        }
+                        if (typeof(response.chat) != "undefined" && response.chat !== null) {
                             $('.output').append('<p>' + response.chat.from + ': ' + response.chat.message + '</p>'); // receive message
+                        }
+                        if (typeof(response.logout) != "undefined" && response.logout !== null) {
+                            $('.output').append('<p>' + response.logout + ' has logged out.</p>');
                         }
                     };
 

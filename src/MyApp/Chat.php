@@ -48,6 +48,11 @@ class Chat implements MessageComponentInterface {
     public function onClose(ConnectionInterface $conn) {
         // The connection is closed, remove it, as we can no longer send it messages
         $this->clients->detach($conn);
+        foreach ($this->clients as $client) {
+            $client->send(json_encode(array(
+                'logout' => $this->aliases[$conn->resourceId]
+            )));
+        }
         unset($this->aliases[$conn->resourceId]);
         echo "Connection {$conn->resourceId} has disconnected\n";
     }
@@ -61,13 +66,21 @@ class Chat implements MessageComponentInterface {
     public function handle_login($login, $from) {
         if (is_invalid_login($login, $this->aliases)) {
             $from->send(json_encode(array(
-                'login' => 'Disconnecting: invalid login',
+                'loginError' => 'Disconnecting: invalid login',
             )));
             echo "Invalid login.\n";
             $from->close();
         } else {
             $this->aliases[$from->resourceId] = $login;
             echo "The following users are logged in: " . implode(', ', $this->aliases) . "\n";
+            foreach ($this->clients as $client) {
+                if ($from !== $client) {
+                    // The sender is not the receiver, send to each client connected
+                    $client->send(json_encode(array(
+                        'login' => $login
+                    )));
+                }
+            }
         }
     }
 
