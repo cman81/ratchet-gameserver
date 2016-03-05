@@ -20,9 +20,18 @@ class Chat implements MessageComponentInterface {
 
     public function onMessage(ConnectionInterface $from, $msg) {
         $json = json_decode($msg, TRUE);
+        $is_handled = FALSE;
         if (isset($json['login'])) {
-            handle_login($json['login'], $from, $this->aliases);
-        } else {
+            $this->handle_login($json['login'], $from);
+            $is_handled = TRUE;
+        }
+        if (isset($json['chat'])) {
+            $this->handle_chat($json['chat'], $from, $msg);
+            $is_handled = TRUE;
+        }
+
+        // default handler
+        if (!$is_handled) {
             $numRecv = count($this->clients) - 1;
             echo sprintf('Connection %d sending message "%s" to %d other connection%s' . "\n"
                 , $from->resourceId, $msg, $numRecv, $numRecv == 1 ? '' : 's');
@@ -48,20 +57,32 @@ class Chat implements MessageComponentInterface {
 
         $conn->close();
     }
-}
 
-function handle_login($login, &$from, &$aliases) {
-    if (is_invalid_login($login, $aliases)) {
-        $from->send(json_encode(array(
-            'login' => 'Disconnecting: invalid login',
-        )));
-        echo "Invalid login.\n";
-        $from->close();
-    } else {
-        $aliases[$from->resourceId] = $login;
-        echo "The following users are logged in: " . implode(', ', $aliases) . "\n";
+    public function handle_login($login, $from) {
+        if (is_invalid_login($login, $this->aliases)) {
+            $from->send(json_encode(array(
+                'login' => 'Disconnecting: invalid login',
+            )));
+            echo "Invalid login.\n";
+            $from->close();
+        } else {
+            $this->aliases[$from->resourceId] = $login;
+            echo "The following users are logged in: " . implode(', ', $this->aliases) . "\n";
+        }
     }
 
+    public function handle_chat($json, $from, $msg) {
+        $numRecv = count($this->clients) - 1;
+        echo sprintf('Connection %d sending message "%s" to %d other connection%s' . "\n"
+            , $from->resourceId, $msg, $numRecv, $numRecv == 1 ? '' : 's');
+
+        foreach ($this->clients as $client) {
+            if ($from !== $client) {
+                // The sender is not the receiver, send to each client connected
+                $client->send($msg);
+            }
+        }
+    }
 }
 
 function is_invalid_login($username, $aliases) {

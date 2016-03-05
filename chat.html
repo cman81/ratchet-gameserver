@@ -75,7 +75,7 @@
                             $('.hide-after-login').show();
                             $('.logout-button').hide();
                         } else {
-                            $('.output').append('<p>Them: ' + response.chat + '</p>'); // receive message
+                            $('.output').append('<p>' + response.chat.from + ': ' + response.chat.message + '</p>'); // receive message
                         }
                     };
 
@@ -94,7 +94,15 @@
                 $('.send-button').click(function(ev) {
                     ev.preventDefault();
                     $('.output').append('<p>Me: ' + $('.message').val() + '</p>'); // output message on our screen
-                    conn.send(JSON.stringify({"chat": $('.message').val()})); // broadcast message
+                    // broadcast message
+                    conn.send(JSON.stringify(
+                            {
+                                "chat": {
+                                    "from": $('.alias').val(),
+                                    "message" : $('.message').val()
+                                }
+                            }
+                    ));
                     $('.message').val(''); // clear buffer
                 });
             });
