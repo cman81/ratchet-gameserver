@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Instant Chat!</title>
+    <style>
+        body { height: 100%; }
+        .output {
+            border: 10px black solid;
+            height: 90vh;
+            margin-bottom: 2vh;
+        }
+        .input input {
+            float: left;
+        }
+        .message {
+            width: 90%;
+        }
+    </style>
+    <script src="//code.jquery.com/jquery-2.2.1.min.js"></script>
+    <script>
+
+
+        (function($) {
+            $(document).ready(function() {
+                // establish connection
+                $('.output').append('<p>Connecting...</p>');
+                var conn = new WebSocket('ws://vm:8080');
+                conn.onopen = function(e) {
+                    console.log("Connection established!");
+                    $('.output').append('<p>Connection established!</p>');
+                };
+
+                // listen for events
+                conn.onmessage = function(e) {
+                    $('.output').append('<p>Them: ' + e.data + '</p>'); // receive message
+                };
+
+                // send out events
+                $('.send-button').click(function(ev) {
+                    ev.preventDefault();
+                    $('.output').append('<p>Me: ' + $('.message').val() + '</p>'); // output message on our screen
+                    conn.send($('.message').val()); // broadcast message
+                    $('.message').val(''); // clear buffer
+                });
+            });
+        })(jQuery);
+
+    </script>
+</head>
+<body>
+<div class="output"></div>
+<div class="input">
+    <form>
+        <input type="text" name="message" class="message"/>
+        <input type="submit" class="send-button" value="Send">
+    </form>
+</div>
+</body>
+</html>
