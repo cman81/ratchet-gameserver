@@ -1,0 +1,48 @@
+.clearfix:after {
+  visibility: hidden;
+  display: block;
+  font-size: 0;
+  content: " ";
+  clear: both;
+  height: 0; }
+
+* html .clearfix {
+  zoom: 1; }
+
+/* IE6 */
+*:first-child + html .clearfix {
+  zoom: 1; }
+
+/* IE7 */
+.float-left {
+  float: left; }
+
+.clear {
+  float: none;
+  clear: both; }
+
+body {
+  height: 100%; }
+
+.operations, .input {
+  height: 5vh; }
+
+.output {
+  border: 1px black solid;
+  height: 80vh;
+  margin-bottom: 2vh;
+  padding: 5px; }
+
+.message {
+  width: 90%; }
+
+.game {
+  width: 80%; }
+
+.chat {
+  width: 20%; }
+
+.input, .logout-button {
+  display: none; }
+
+/*# sourceMappingURL=style.css.map */
