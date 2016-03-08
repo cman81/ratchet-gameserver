@@ -146,6 +146,7 @@ class Chat implements MessageComponentInterface {
                     'score' => 0,
                     'workers' => 0,
                     'private' => array(),
+                    'hidden' => array(),
                 );
                 $this->game['lastupdated'] = time();
                 echo $this->aliases[$from->resourceId] . " joined the game as Player " . count($this->game['players']) . "\n";
@@ -162,6 +163,24 @@ class Chat implements MessageComponentInterface {
             $this->game['players'][1]['workers'] = 5;
 
             // generate a starter deck and codex for this player
+            foreach ($this->game['players'] as $key => $value) {
+                $team = array_rand(
+                    array(
+                        array(
+                            'starter' => 'red',
+                            'specs' => array('anarchy', 'fire', 'blood'),
+                        ),
+                        array(
+                            'starter' => 'white',
+                            'specs' => array('discipline', 'ninjutsu', 'strength'),
+                        ),
+                        array(
+                            'starter' => 'black',
+                            'specs' => array('demonology', 'disease', 'necromancy'),
+                        ),
+                    )
+                );
+            }
 
             // deal out 5 cards to each player
 
