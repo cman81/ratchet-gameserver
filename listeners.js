@@ -67,7 +67,11 @@
                 if (typeof(response.game) != "undefined" && response.game !== null) {
                     if (!response.game.is_started) {
                         $('.game').html('<p>Players:' + getPlayers(response.game) + '</p>');
-                        $('.game').append('<a href="#" class="start-game">Start Game</a>');
+                        if (response.game.players.length >= response.game.min_players) {
+                            $('.game').append('<a href="#" class="start-game">Start Game</a>');
+                        } else {
+                            $('.game').append('<p>Waiting for other players...</p>');
+                        }
                     }
 
                 }

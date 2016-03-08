@@ -12,6 +12,7 @@ class Chat implements MessageComponentInterface {
         $this->game = array(
             'players' => array(),
             'is_started' => FALSE,
+            'min_players' => 2,
             'max_players' => 2,
             'lastupdated' => time(),
             'whos_turn' => 0,
@@ -143,6 +144,8 @@ class Chat implements MessageComponentInterface {
                     'id' => $from->resourceId,
                     'alias' => $this->aliases[$from->resourceId],
                     'score' => 0,
+                    'workers' => 0,
+                    'private' => array(),
                 );
                 $this->game['lastupdated'] = time();
                 echo $this->aliases[$from->resourceId] . " joined the game as Player " . count($this->game['players']) . "\n";
@@ -150,6 +153,18 @@ class Chat implements MessageComponentInterface {
         }
         if ($json['op'] == 'start') {
             $this->game['is_started'] = TRUE;
+
+            // determine turn order
+            shuffle($this->game['players']);
+
+            // setup initial workers
+            $this->game['players'][0]['workers'] = 4;
+            $this->game['players'][1]['workers'] = 5;
+
+            // generate a starter deck and codex for this player
+
+            // deal out 5 cards to each player
+
         }
         $this->send_gamestate();
     }
