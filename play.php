@@ -13,6 +13,7 @@
     <title>Instant Chat!</title>
     <link rel="stylesheet" type="text/css" href="style.css" />
     <script src="//code.jquery.com/jquery-2.2.1.min.js"></script>
+    <script src="helpers.js"></script>
     <script src="listeners.js"></script>
     <script src="senders.js"></script>
     <script>

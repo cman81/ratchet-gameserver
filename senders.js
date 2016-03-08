@@ -28,9 +28,15 @@
         $('.play-button').click(function() {
             conn.send(JSON.stringify(
                 {
-                    "game": {
-                        "op": "join"
-                    }
+                    "game": { "op": "join" }
+                }
+            ));
+        });
+        $('.game').on('click', '.start-game', function(ev) {
+            ev.preventDefault();
+            conn.send(JSON.stringify(
+                {
+                    "game": { "op" : "start" }
                 }
             ));
         });

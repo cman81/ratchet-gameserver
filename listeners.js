@@ -65,9 +65,9 @@
                     $('.output').append('<p>There was a problem with your request: ' + response.gameError + '</p>'); // receive message
                 }
                 if (typeof(response.game) != "undefined" && response.game !== null) {
-                    $('.game').html('<p>Players:</p>');
                     if (!response.game.is_started) {
-                        $('.game').append('<a href="#" class="start-game">Start Game.</a>');
+                        $('.game').html('<p>Players:' + getPlayers(response.game) + '</p>');
+                        $('.game').append('<a href="#" class="start-game">Start Game</a>');
                     }
 
                 }
