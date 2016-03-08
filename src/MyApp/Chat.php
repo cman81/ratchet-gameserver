@@ -118,12 +118,15 @@ class Chat implements MessageComponentInterface {
                 return;
             }
             // are we already playing?
+            $alias = $this->aliases[$from->resourceId];
             foreach ($this->game['players'] as $key => $value) {
-                if (isset($value['id']) && ($value['id'] == $from->resourceId)) {
+                if ($value['alias'] == $alias) {
+                    $this->game['players'][$key]['id'] = $from->resourceId;
                     $from->send(json_encode(array(
                         'gameError' => 'You are already playing!'
                     )));
                     echo $this->aliases[$from->resourceId] . " tried joining, but was already playing\n";
+                    $this->send_gamestate();
                     return;
                 }
             }
@@ -148,6 +151,13 @@ class Chat implements MessageComponentInterface {
         if ($json['op'] == 'start') {
             $this->game['is_started'] = TRUE;
         }
+        $this->send_gamestate();
+    }
+
+    /**
+     * Send the current game state
+     */
+    function send_gamestate() {
         foreach ($this->clients as $client) {
             $msg = json_encode(array('game' => apply_mask($this->game, $client->resourceId)));
             echo "Passing the following information to " . $this->aliases[$client->resourceId] . ": " . $msg . "\n";
