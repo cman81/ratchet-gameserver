@@ -160,27 +160,13 @@ class Chat implements MessageComponentInterface {
 
             // generate a starter deck and codex for this player
             foreach ($this->game['players'] as $key => $value) {
-                $team = array(
-                    array(
-                        'starter' => 'red',
-                        'specs' => array('anarchy', 'fire', 'blood'),
-                    ),
-                    array(
-                        'starter' => 'white',
-                        'specs' => array('discipline', 'ninjutsu', 'strength'),
-                    ),
-                    array(
-                        'starter' => 'black',
-                        'specs' => array('demonology', 'disease', 'necromancy'),
-                    ),
-                );
-                $pick = array_rand($team);
-                $team = $team[$pick];
-
-                $value->build_starter_deck($team['starter']);
-                $value->build_codex($team['pecs']);
+                $value->build_starter_deck();
+                $value->build_codex();
 
                 // deal out 5 cards to each player
+                for ($i = 0; $i < 5; $i++) {
+                    $value->draw_card();
+                }
             }
         }
         $this->send_gamestate();
@@ -213,4 +199,38 @@ function is_invalid_login($username, $aliases) {
  */
 function apply_mask($gamestate, $this_player) {
     return $gamestate;
+}
+
+function unit_test() {
+    $game = array(
+        'players' => array(
+            new Player(12, 'Christian'),
+            new Player(13, 'haha'),
+        ),
+        'is_started' => FALSE,
+        'min_players' => 2,
+        'max_players' => 2,
+        'lastupdated' => time(),
+        'whos_turn' => 0,
+    );
+
+    $game['is_started'] = TRUE;
+
+// determine turn order
+    shuffle($game['players']);
+
+// setup initial workers
+    $game['players'][0]->workers = 4;
+    $game['players'][1]->workers = 5;
+
+// generate a starter deck and codex for this player
+    foreach ($game['players'] as $key => $value) {
+        $value->build_starter_deck();
+        $value->build_codex();
+
+        // deal out 5 cards to each player
+        for ($i = 0; $i < 5; $i++) {
+            $value->draw_card();
+        }
+    }
 }
