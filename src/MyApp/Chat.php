@@ -160,29 +160,28 @@ class Chat implements MessageComponentInterface {
 
             // generate a starter deck and codex for this player
             foreach ($this->game['players'] as $key => $value) {
-                $team = array_rand(
+                $team = array(
                     array(
-                        array(
-                            'starter' => 'red',
-                            'specs' => array('anarchy', 'fire', 'blood'),
-                        ),
-                        array(
-                            'starter' => 'white',
-                            'specs' => array('discipline', 'ninjutsu', 'strength'),
-                        ),
-                        array(
-                            'starter' => 'black',
-                            'specs' => array('demonology', 'disease', 'necromancy'),
-                        ),
-                    )
+                        'starter' => 'red',
+                        'specs' => array('anarchy', 'fire', 'blood'),
+                    ),
+                    array(
+                        'starter' => 'white',
+                        'specs' => array('discipline', 'ninjutsu', 'strength'),
+                    ),
+                    array(
+                        'starter' => 'black',
+                        'specs' => array('demonology', 'disease', 'necromancy'),
+                    ),
                 );
+                $pick = array_rand($team);
+                $team = $team[$pick];
 
                 $value->build_starter_deck($team['starter']);
                 $value->build_codex($team['pecs']);
 
                 // deal out 5 cards to each player
             }
-
         }
         $this->send_gamestate();
     }
