@@ -40,5 +40,25 @@
                 }
             ));
         });
+        $('.game').on('click', '.gain-gold', function() {
+            conn.send(JSON.stringify(
+                {
+                    "game": {
+                        "op" : "transaction",
+                        "actions": ['gain_gold']
+                    }
+                }
+            ));
+        });
+        $('.game').on('click', '.spend-gold', function() {
+            conn.send(JSON.stringify(
+                {
+                    "game": {
+                        "op" : "transaction",
+                        "actions": ['spend_gold']
+                    }
+                }
+            ));
+        });
     });
 })(jQuery);

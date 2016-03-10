@@ -76,7 +76,10 @@
                         drawGameState(response.game);
                         presentActions(response.game);
                     }
-
+                    for (var key in response.messages) {
+                        var value = response.messages[key];
+                        $('.output').append('<p>' + value + '</p>');
+                    }
                 }
             };
 

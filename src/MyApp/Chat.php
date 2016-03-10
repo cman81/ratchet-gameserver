@@ -17,6 +17,7 @@ class Chat implements MessageComponentInterface {
             'lastupdated' => time(),
             'whos_turn' => 0,
         );
+        $this->message_buffer = array();
     }
 
     public function onOpen(ConnectionInterface $conn) {
@@ -180,7 +181,16 @@ class Chat implements MessageComponentInterface {
                 }
             }
         }
+        if ($json['op'] == 'transaction') {
+            foreach ($json['actions'] as $value) {
+                if (method_exists($this, 'action_' . $value)) {
+                    $fnname = 'action_' . $value;
+                    $this->{$fnname}($from);
+                }
+            }
+        }
         $this->send_gamestate();
+        $this->message_buffer = array();
     }
 
     /**
@@ -188,9 +198,34 @@ class Chat implements MessageComponentInterface {
      */
     function send_gamestate() {
         foreach ($this->clients as $client) {
-            $msg = json_encode(array('game' => apply_mask($this->game, $client->resourceId)));
+            $msg = json_encode(array(
+                'game' => apply_mask($this->game, $client->resourceId),
+                'messages' => $this->message_buffer,
+            ));
             echo "Passing the following information to " . $this->aliases[$client->resourceId] . ":\n\n" . $msg . "\n\n";
             $client->send($msg);
+        }
+    }
+
+    /**
+     * Game actions
+     */
+    function action_gain_gold($from) {
+        foreach ($this->game['players'] as $value) {
+            if ($value->id == $from->resourceId) {
+                $value->gold++;
+                $this->message_buffer[] = $value->alias . ' gained 1 gold.';
+                break;
+            }
+        }
+    }
+    function action_spend_gold($from) {
+        foreach ($this->game['players'] as $value) {
+            if ($value->id == $from->resourceId) {
+                $value->gold--;
+                $this->message_buffer[] = $value->alias . ' spent 1 gold.';
+                break;
+            }
         }
     }
 }
