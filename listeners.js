@@ -72,6 +72,9 @@
                         } else {
                             $('.game').append('<p>Waiting for other players...</p>');
                         }
+                    } else {
+                        drawGameState(response.game);
+                        presentActions(response.game);
                     }
 
                 }
@@ -79,6 +82,16 @@
 
             $('.hide-after-login').hide();
             $('.logout-button').show();
+
+            // TODO: how do I put the below functions in a separate file?
+            function drawGameState(game) {
+                $('.game').html('<pre>' + JSON.stringify(game, null, 4) + '</pre><ul class="actions"></ul>');
+            }
+
+            function presentActions(game) {
+                $('.game .actions').append('<li class="gain-gold">Gain 1 Gold</li>');
+                $('.game .actions').append('<li class="spend-gold">Spend 1 Gold</li>');
+            }
         });
     });
 })(jQuery);

@@ -38,6 +38,11 @@ body {
 
 .game {
   width: 80%; }
+  .game pre {
+    max-height: 50vh;
+    overflow-y: scroll; }
+  .game .actions li {
+    cursor: pointer; }
 
 .chat {
   width: 20%; }

@@ -23,6 +23,15 @@ body { height: 100%; }
   padding: 5px;
 }
 .message { width: 90%; }
-.game { width: 80%; }
+.game {
+  width: 80%;
+  pre {
+    max-height: 50vh;
+    overflow-y: scroll;
+  }
+  .actions li {
+    cursor: pointer;
+  }
+}
 .chat { width: 20%; }
 .input, .logout-button { display: none; }

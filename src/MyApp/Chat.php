@@ -66,6 +66,17 @@ class Chat implements MessageComponentInterface {
         }
         unset($this->aliases[$conn->resourceId]);
         echo "Connection {$conn->resourceId} has disconnected\n";
+
+        // also, just quit the game for now
+        $this->game = array(
+            'players' => array(),
+            'is_started' => FALSE,
+            'min_players' => 2,
+            'max_players' => 2,
+            'lastupdated' => time(),
+            'whos_turn' => 0,
+        );
+        $this->send_gamestate();
     }
 
     public function onError(ConnectionInterface $conn, \Exception $e) {
@@ -178,7 +189,7 @@ class Chat implements MessageComponentInterface {
     function send_gamestate() {
         foreach ($this->clients as $client) {
             $msg = json_encode(array('game' => apply_mask($this->game, $client->resourceId)));
-            echo "Passing the following information to " . $this->aliases[$client->resourceId] . ": " . $msg . "\n";
+            echo "Passing the following information to " . $this->aliases[$client->resourceId] . ":\n\n" . $msg . "\n\n";
             $client->send($msg);
         }
     }
