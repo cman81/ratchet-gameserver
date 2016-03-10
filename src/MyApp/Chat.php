@@ -140,13 +140,9 @@ class Chat implements MessageComponentInterface {
                 echo $this->aliases[$from->resourceId] . " tried joining, but was unable to\n";
                 return;
             } else {
-                $this->game['players'][] = array(
-                    'id' => $from->resourceId,
-                    'alias' => $this->aliases[$from->resourceId],
-                    'score' => 0,
-                    'workers' => 0,
-                    'private' => array(),
-                    'hidden' => array(),
+                $this->game['players'][] = new Player(
+                    $from->resourceId,
+                    $this->aliases[$from->resourceId]
                 );
                 $this->game['lastupdated'] = time();
                 echo $this->aliases[$from->resourceId] . " joined the game as Player " . count($this->game['players']) . "\n";
@@ -159,8 +155,8 @@ class Chat implements MessageComponentInterface {
             shuffle($this->game['players']);
 
             // setup initial workers
-            $this->game['players'][0]['workers'] = 4;
-            $this->game['players'][1]['workers'] = 5;
+            $this->game['players'][0]->workers = 4;
+            $this->game['players'][1]->workers = 5;
 
             // generate a starter deck and codex for this player
             foreach ($this->game['players'] as $key => $value) {
@@ -181,8 +177,8 @@ class Chat implements MessageComponentInterface {
                     )
                 );
 
-                $this->game['players'][$key]['discards'] = build_starter_deck($team['starter']); // place in discards so that they will get shuffled on the draw
-                $this->game['players'][$key]['codex'] = build_codex($team['pecs']);
+                $value->build_starter_deck($team['starter']);
+                $value->build_codex($team['pecs']);
 
                 // deal out 5 cards to each player
             }
@@ -218,35 +214,4 @@ function is_invalid_login($username, $aliases) {
  */
 function apply_mask($gamestate, $this_player) {
     return $gamestate;
-}
-
-function build_starter_deck($color) {
-    $cards = file(SERVERROOT . '/cards.csv');
-    $deck = array();
-    $pattern = '/^(' . $color . '-\d{1}).*/';
-    foreach ($cards as $value) {
-        if (preg_match($pattern, $value)) {
-            $deck[] = trim($value);
-        }
-    }
-    return $deck;
-}
-
-function build_codex($specs) {
-    $cards = file(SERVERROOT . '/cards.csv');
-    $patterns = array();
-    foreach ($specs as $value) {
-        $patterns[] = '/^(' . $value . '-\d{1,2}).*/';
-    }
-    foreach ($cards as $value) {
-        foreach ($patterns as $pattern) {
-            if (preg_match($pattern, $value)) {
-                for ($i = 0; $i < 2; $i++) {
-                    $deck[] = trim($value);
-                }
-                break; // proceed to next card
-            }
-        }
-    }
-    return $cards;
 }
