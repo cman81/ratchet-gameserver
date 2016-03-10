@@ -88,12 +88,20 @@
 
             // TODO: how do I put the below functions in a separate file?
             function drawGameState(game) {
-                $('.game').html('<pre>' + JSON.stringify(game, null, 4) + '</pre><ul class="actions"></ul>');
+                var me = game.players[game.me];
+                $('.game').html('<div class="stats"><h2>Stats</h2></div><div class="table"><h2>Table</h2></div><div class="hand clearfix"></div><div class="actions"><h2>Actions</h2></div>');
+                $('.game .stats').append('<div>Workers: ' + me.workers + '</div>');
+                $('.game .stats').append('<div>Gold: ' + me.gold + '</div>');
+                for (var key in me.private.hand) {
+                    var value = me.private.hand[key];
+                    $('.game .hand').append('<img src="cards/' + value + '" class="float-left card-thumb" />');
+                }
             }
 
             function presentActions(game) {
-                $('.game .actions').append('<li class="gain-gold">Gain 1 Gold</li>');
-                $('.game .actions').append('<li class="spend-gold">Spend 1 Gold</li>');
+                $('.game .actions').append('<input type="button" class="gain-gold" value="Gain 1 Gold" />');
+                $('.game .actions').append('<input type="button" class="spend-gold" value="Spend 1 Gold" />');
+                $('.game .actions').append('<input type="button" class="recruit-worker" value="Recruit Worker" />');
             }
         });
     });

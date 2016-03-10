@@ -35,3 +35,8 @@ body { height: 100%; }
 }
 .chat { width: 20%; }
 .input, .logout-button { display: none; }
+.card-thumb {
+  width: 225px;
+  margin: 10px;
+  cursor: pointer;
+}
