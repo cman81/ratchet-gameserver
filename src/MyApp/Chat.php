@@ -180,9 +180,12 @@ class Chat implements MessageComponentInterface {
                         ),
                     )
                 );
-            }
 
-            // deal out 5 cards to each player
+                $this->game['players'][$key]['discards'] = build_starter_deck($team['starter']); // place in discards so that they will get shuffled on the draw
+                $this->game['players'][$key]['codex'] = build_codex($team['pecs']);
+
+                // deal out 5 cards to each player
+            }
 
         }
         $this->send_gamestate();
@@ -215,4 +218,35 @@ function is_invalid_login($username, $aliases) {
  */
 function apply_mask($gamestate, $this_player) {
     return $gamestate;
+}
+
+function build_starter_deck($color) {
+    $cards = file(SERVERROOT . '/cards.csv');
+    $deck = array();
+    $pattern = '/^(' . $color . '-\d{1}).*/';
+    foreach ($cards as $value) {
+        if (preg_match($pattern, $value)) {
+            $deck[] = trim($value);
+        }
+    }
+    return $deck;
+}
+
+function build_codex($specs) {
+    $cards = file(SERVERROOT . '/cards.csv');
+    $patterns = array();
+    foreach ($specs as $value) {
+        $patterns[] = '/^(' . $value . '-\d{1,2}).*/';
+    }
+    foreach ($cards as $value) {
+        foreach ($patterns as $pattern) {
+            if (preg_match($pattern, $value)) {
+                for ($i = 0; $i < 2; $i++) {
+                    $deck[] = trim($value);
+                }
+                break; // proceed to next card
+            }
+        }
+    }
+    return $cards;
 }
