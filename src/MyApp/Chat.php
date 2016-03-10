@@ -121,8 +121,8 @@ class Chat implements MessageComponentInterface {
             // are we already playing?
             $alias = $this->aliases[$from->resourceId];
             foreach ($this->game['players'] as $key => $value) {
-                if ($value['alias'] == $alias) {
-                    $this->game['players'][$key]['id'] = $from->resourceId;
+                if ($value->alias == $alias) {
+                    $this->game['players'][$key]->id = $from->resourceId;
                     $from->send(json_encode(array(
                         'gameError' => 'You are already playing!'
                     )));
@@ -198,6 +198,15 @@ function is_invalid_login($username, $aliases) {
  * In certain games, information must be hidden from the player
  */
 function apply_mask($gamestate, $this_player) {
+    foreach ($gamestate['players'] as $key => $value) {
+        $clone = clone $value;
+        unset($clone->hidden);
+        if ($this_player != $clone->id) {
+            unset($clone->private);
+        }
+        $gamestate['players'][$key] = $clone;
+    }
+
     return $gamestate;
 }
 
