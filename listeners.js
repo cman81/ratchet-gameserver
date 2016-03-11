@@ -102,6 +102,7 @@
                 $('.game .actions').append('<input type="button" class="gain-gold" value="Gain 1 Gold" />');
                 $('.game .actions').append('<input type="button" class="spend-gold" value="Spend 1 Gold" />');
                 $('.game .actions').append('<input type="button" class="recruit-worker" value="Recruit Worker" />');
+                $('.game .actions').append('Hand Idx: <span class="hand-index"></span>');
             }
         });
     });

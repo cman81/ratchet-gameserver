@@ -55,4 +55,8 @@ body {
   margin: 10px;
   cursor: pointer; }
 
+@media all and (max-width: 1024px) {
+  .card-thumb {
+    width: 150px; } }
+
 /*# sourceMappingURL=style.css.map */

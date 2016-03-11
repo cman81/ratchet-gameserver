@@ -4,7 +4,10 @@
 
 (function($) {
     $(document).ready(function () {
-
+        $('.game').on('click', '.hand img', function() {
+            console.log($(this));
+            $('.hand-index').html($(this).index());
+        });
     });
 })(jQuery);
 

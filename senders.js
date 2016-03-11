@@ -45,7 +45,10 @@
                 {
                     "game": {
                         "op" : "transaction",
-                        "actions": ['gain_gold']
+                        "actions": [{
+                            'action': 'gain_gold',
+                            'amount': 1 // amount
+                        }]
                     }
                 }
             ));
@@ -55,7 +58,23 @@
                 {
                     "game": {
                         "op" : "transaction",
-                        "actions": ['spend_gold']
+                        "actions": [{
+                            'action': 'spend_gold',
+                            'amount': 1
+                        }]
+                    }
+                }
+            ));
+        });
+        $('.game').on('click', '.recruit-worker', function() {
+            conn.send(JSON.stringify(
+                {
+                    "game": {
+                        "op" : "transaction",
+                        "actions": [{
+                            'action': 'recruit_worker',
+                            'card_index': 2 // card idx
+                        }],
                     }
                 }
             ));

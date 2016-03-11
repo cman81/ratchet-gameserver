@@ -180,12 +180,15 @@ class Chat implements MessageComponentInterface {
                     $value->draw_card();
                 }
             }
+
+            $this->message_buffer[] = $this->aliases[$from->resourceId] . ' started the game.';
         }
         if ($json['op'] == 'transaction') {
+            echo "Received from " . $this->aliases[$from->resourceId] . ":\n\n" . json_encode($json) . "\n\n";
             foreach ($json['actions'] as $value) {
-                if (method_exists($this, 'action_' . $value)) {
-                    $fnname = 'action_' . $value;
-                    $this->{$fnname}($from);
+                if (method_exists($this, 'action_' . $value['action'])) {
+                    $fnname = 'action_' . $value['action'];
+                    $this->{$fnname}($from, $value);
                 }
             }
         }
@@ -210,20 +213,33 @@ class Chat implements MessageComponentInterface {
     /**
      * Game actions
      */
-    function action_gain_gold($from) {
+    function action_gain_gold($from, $settings) {
+        $amt = $settings['amount'];
         foreach ($this->game['players'] as $value) {
             if ($value->id == $from->resourceId) {
-                $value->gold++;
+                $value->gold += $amt;
                 $this->message_buffer[] = $value->alias . ' gained 1 gold.';
                 break;
             }
         }
     }
-    function action_spend_gold($from) {
+    function action_spend_gold($from, $settings) {
+        $amt = $settings['amount'];
         foreach ($this->game['players'] as $value) {
             if ($value->id == $from->resourceId) {
-                $value->gold--;
+                $value->gold -= $amt;
                 $this->message_buffer[] = $value->alias . ' spent 1 gold.';
+                break;
+            }
+        }
+    }
+    function action_recruit_worker($from, $settings) {
+        $card_idx = $settings['card_index'];
+        foreach ($this->game['players'] as $value) { /* @var $value Player */
+            if ($value->id == $from->resourceId) {
+                $value->gold--;
+                $value->move_card($value->hidden['hand'], $card_idx, $value->hidden['workers']);
+                $this->message_buffer[] = $value->alias . ' recruited a worker.';
                 break;
             }
         }
@@ -249,6 +265,8 @@ function apply_mask($gamestate, $this_player) {
         unset($clone->hidden);
         if ($this_player != $clone->id) {
             unset($clone->private);
+        } else {
+            $gamestate['me'] = $key;
         }
         $gamestate['players'][$key] = $clone;
     }

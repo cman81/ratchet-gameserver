@@ -21,6 +21,7 @@ class Player {
         'hand' => array(),
         'discards' => array(),
         'codex' => array(),
+        'workers' => array(),
     );
     public $hidden = array( // hidden from other players including ourselves
         'deck' => array(),
@@ -97,5 +98,12 @@ class Player {
             $this->private['discards'] = array();
         }
         $this->private['hand'][] = array_pop($this->hidden['deck']);
+    }
+
+    /**
+     * Generic card mover (from one zone to another)
+     */
+    function move_card($from_deck, $from_idx, $to_deck) {
+        $to_deck[] = array_splice($from_deck, $from_idx, 1);
     }
 }
