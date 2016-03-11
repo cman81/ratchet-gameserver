@@ -234,11 +234,12 @@ class Chat implements MessageComponentInterface {
         }
     }
     function action_recruit_worker($from, $settings) {
-        $card_idx = $settings['card_index'];
+        $card_idx = intval($settings['card_index']);
         foreach ($this->game['players'] as $value) { /* @var $value Player */
             if ($value->id == $from->resourceId) {
                 $value->gold--;
-                $value->move_card($value->hidden['hand'], $card_idx, $value->hidden['workers']);
+                $value->workers++;
+                $value->move_card($value->private['hand'], $card_idx, $value->private['workers']);
                 $this->message_buffer[] = $value->alias . ' recruited a worker.';
                 break;
             }
@@ -305,5 +306,8 @@ function unit_test() {
         for ($i = 0; $i < 5; $i++) {
             $value->draw_card();
         }
+
+        $value->move_card($value->private['hand'], 2, $value->private['workers']);
     }
+
 }

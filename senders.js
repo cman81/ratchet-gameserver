@@ -73,7 +73,7 @@
                         "op" : "transaction",
                         "actions": [{
                             'action': 'recruit_worker',
-                            'card_index': 2 // card idx
+                            'card_index': $('.hand-index').html() // card idx
                         }],
                     }
                 }

@@ -89,13 +89,14 @@
             // TODO: how do I put the below functions in a separate file?
             function drawGameState(game) {
                 var me = game.players[game.me];
-                $('.game').html('<div class="stats"><h2>Stats</h2></div><div class="table"><h2>Table</h2></div><div class="hand clearfix"></div><div class="actions"><h2>Actions</h2></div>');
+                $('.game').html('<div class="stats"><h2>Stats</h2></div><div class="table"><h2>Table</h2></div><div class="hand clearfix"><h2>Hand</h2></div><div class="actions"><h2>Actions</h2></div>');
                 $('.game .stats').append('<div>Workers: ' + me.workers + '</div>');
                 $('.game .stats').append('<div>Gold: ' + me.gold + '</div>');
                 for (var key in me.private.hand) {
                     var value = me.private.hand[key];
                     $('.game .hand').append('<img src="cards/' + value + '" class="float-left card-thumb" />');
                 }
+                console.log(game);
             }
 
             function presentActions(game) {
