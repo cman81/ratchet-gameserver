@@ -163,6 +163,7 @@ class Chat implements MessageComponentInterface {
         }
         if ($json['op'] == 'start') {
             $this->game['is_started'] = TRUE;
+            $this->game['table'] = array();
 
             // determine turn order
             shuffle($this->game['players']);
