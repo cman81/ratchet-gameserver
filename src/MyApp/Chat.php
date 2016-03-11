@@ -16,6 +16,7 @@ class Chat implements MessageComponentInterface {
             'max_players' => 2,
             'lastupdated' => time(),
             'whos_turn' => 0,
+            'table' => array(),
         );
         $this->message_buffer = array();
     }
@@ -265,6 +266,16 @@ class Chat implements MessageComponentInterface {
             }
         }
     }
+    function action_deploy($from, $settings) {
+        $card_idx = intval($settings['card_index']);
+        foreach ($this->game['players'] as $value) { /* @var $value Player */
+            if ($value->id == $from->resourceId) {
+                $value->move_card($value->private['hand'], $card_idx, $this->game['table']);
+                $this->message_buffer[] = $value->alias . ' deployed to the table.';
+                break;
+            }
+        }
+    }
 }
 
 function is_invalid_login($username, $aliases) {
@@ -327,7 +338,9 @@ function unit_test() {
             $value->draw_card();
         }
 
-        $value->move_card($value->private['hand'], 2, $value->private['workers']);
+        $value->move_card($value->private['hand'], 0, $value->private['workers']);
+        $value->move_card($value->private['hand'], 0, $value->private['workers']);
+        $value->move_card($value->private['hand'], 0, $value->private['workers']);
     }
 
 }

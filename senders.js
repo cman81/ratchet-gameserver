@@ -47,7 +47,7 @@
                         "op" : "transaction",
                         "actions": [{
                             'action': 'gain_gold',
-                            'amount': 1 // amount
+                            'amount': 1
                         }]
                     }
                 }
@@ -73,7 +73,7 @@
                         "op" : "transaction",
                         "actions": [{
                             'action': 'recruit_worker',
-                            'card_index': $('.hand-index').html() // card idx
+                            'card_index': $('.hand-index').html()
                         }],
                     }
                 }
@@ -86,6 +86,19 @@
                         "op" : "transaction",
                         "actions": [{
                             'action': 'discard_redraw'
+                        }],
+                    }
+                }
+            ));
+        });
+        $('.game').on('click', '.deploy', function() {
+            conn.send(JSON.stringify(
+                {
+                    "game": {
+                        "op" : "transaction",
+                        "actions": [{
+                            'action': 'deploy',
+                            'card_index': $('.hand-index').html()
                         }],
                     }
                 }

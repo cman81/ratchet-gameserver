@@ -89,12 +89,25 @@
             // TODO: how do I put the below functions in a separate file?
             function drawGameState(game) {
                 var me = game.players[game.me];
-                $('.game').html('<div class="stats"><h2>Stats</h2></div><div class="table"><h2>Table</h2></div><div class="hand clearfix"><h2>Hand</h2></div><div class="actions"><h2>Actions</h2></div>');
+                $('.game').html('' +
+                    '<div class="stats"><h2>Stats</h2></div>' +
+                    '<div class="table clearfix"><h2>Table</h2></div>' +
+                    '<div class="hand clearfix"><h2>Hand</h2></div>' +
+                    '<div class="actions"><h2>Actions</h2></div>' +
+                    '<div class="workers clearfix"><h2>Workers</h2></div>');
                 $('.game .stats').append('<div>Workers: ' + me.workers + '</div>');
                 $('.game .stats').append('<div>Gold: ' + me.gold + '</div>');
                 for (var key in me.private.hand) {
                     var value = me.private.hand[key];
                     $('.game .hand').append('<img src="cards/' + value + '" class="float-left card-thumb" />');
+                }
+                for (var key in me.private.workers) {
+                    var value = me.private.workers[key];
+                    $('.game .workers').append('<img src="cards/' + value + '" class="float-left card-thumb" />');
+                }
+                for (var key in game.table) {
+                    var value = game.table[key];
+                    $('.game .table').append('<img src="cards/' + value + '" class="float-left card-thumb" />');
                 }
                 console.log(game);
             }
@@ -105,6 +118,7 @@
                 $('.game .actions').append('<input type="button" class="recruit-worker" value="Recruit Worker" />');
                 $('.game .actions').append('Hand Idx: <span class="hand-index"></span>');
                 $('.game .actions').append('<input type="button" class="discard-redraw" value="Discard/Draw Hand" />');
+                $('.game .actions').append('<input type="button" class="deploy" value="Deploy to Table" />');
             }
         });
     });

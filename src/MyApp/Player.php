@@ -104,6 +104,6 @@ class Player {
      * Generic card mover (from one zone to another)
      */
     function move_card(&$from_deck, $from_idx, &$to_deck) {
-        $to_deck += array_splice($from_deck, $from_idx, 1);
+        $to_deck = array_merge($to_deck, array_splice($from_deck, $from_idx, 1));
     }
 }
