@@ -245,6 +245,26 @@ class Chat implements MessageComponentInterface {
             }
         }
     }
+    function action_discard_redraw($from, $settings) {
+        foreach ($this->game['players'] as $value) { /* @var $value Player */
+            if ($value->id == $from->resourceId) {
+                $old_hand_count = count($value->private['hand']);
+                $cards_to_draw = min($old_hand_count + 2, 5);
+
+                // discard your entire hand
+                $value->private['discards'] += $value->private['hand'];
+                $value->private['hand'] = array();
+
+                // redraw
+                for ($i = 0; $i < $cards_to_draw; $i++) {
+                    $value->draw_card();
+                }
+
+                $this->message_buffer[] = $value->alias . ' discarded ' . $old_hand_count .  ' cards and drew ' . $cards_to_draw . ' cards.';
+                break;
+            }
+        }
+    }
 }
 
 function is_invalid_login($username, $aliases) {

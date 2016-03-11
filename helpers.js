@@ -4,9 +4,9 @@
 
 (function($) {
     $(document).ready(function () {
-        $('.game').on('click', '.hand img', function() {
+        $('.game').on('click', '.hand .card-thumb', function() {
             console.log($(this));
-            $('.hand-index').html($(this).index());
+            $('.hand-index').html($(this).index('.card-thumb'));
         });
     });
 })(jQuery);

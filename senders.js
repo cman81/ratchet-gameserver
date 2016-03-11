@@ -79,5 +79,17 @@
                 }
             ));
         });
+        $('.game').on('click', '.discard-redraw', function() {
+            conn.send(JSON.stringify(
+                {
+                    "game": {
+                        "op" : "transaction",
+                        "actions": [{
+                            'action': 'discard_redraw'
+                        }],
+                    }
+                }
+            ));
+        });
     });
 })(jQuery);
