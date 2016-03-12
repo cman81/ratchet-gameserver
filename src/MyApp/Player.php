@@ -18,6 +18,7 @@ class Player {
     public $deck_count = 0;
     public $starter = '';
     public $specs = array();
+    public $heroes = array();
     public $private = array( // other players cannot see this information
         'hand' => array(),
         'discards' => array(),
@@ -72,18 +73,36 @@ class Player {
     public function build_codex() {
         $cards = file(SERVERROOT . '/cards.csv');
         $patterns = array();
+        $hero_begins_with = array();
         foreach ($this->specs as $value) {
             $patterns[] = '/^(' . $value . '-\d{1,2}).*/';
+            $hero_begins_with[] = $value . '-hero';
         }
 
         $this->private['codex'] = array();
         foreach ($cards as $value) {
-            foreach ($patterns as $pattern) {
-                if (preg_match($pattern, $value)) {
-                    for ($i = 0; $i < 2; $i++) {
-                        $this->private['codex'][] = trim($value);
-                    }
+            $hero_found = FALSE;
+            // add to our heroes?
+            foreach ($hero_begins_with as $v2) {
+                if (substr($value, 0, strlen($v2)) == $v2) {
+                    $hero_found = TRUE;
+                    $this->heroes[] = array(
+                        'hero' => trim($value),
+                        'status' => 'waiting',
+                    );
                     break; // proceed to next card
+                }
+            }
+
+            if (!$hero_found) {
+                // add to our codex?
+                foreach ($patterns as $pattern) {
+                    if (preg_match($pattern, $value)) {
+                        for ($i = 0; $i < 2; $i++) {
+                            $this->private['codex'][] = trim($value);
+                        }
+                        break; // proceed to next card
+                    }
                 }
             }
         }
