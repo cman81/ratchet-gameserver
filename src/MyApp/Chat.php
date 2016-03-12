@@ -77,6 +77,7 @@ class Chat implements MessageComponentInterface {
             'max_players' => 2,
             'lastupdated' => time(),
             'whos_turn' => 0,
+            'table' => array(),
         );
         $this->send_gamestate();
     }
@@ -254,7 +255,7 @@ class Chat implements MessageComponentInterface {
                 $cards_to_draw = min($old_hand_count + 2, 5);
 
                 // discard your entire hand
-                $value->private['discards'] += $value->private['hand'];
+                $value->private['discards'] = array_merge($value->private['discards'], $value->private['hand']);
                 $value->private['hand'] = array();
 
                 // redraw
@@ -277,6 +278,16 @@ class Chat implements MessageComponentInterface {
             }
         }
     }
+    function action_tech($from, $settings) {
+        $card_idx = intval($settings['card_index']);
+        foreach ($this->game['players'] as $value) { /* @var $value Player */
+            if ($value->id == $from->resourceId) {
+                $value->move_card($value->private['codex'], $card_idx, $value->private['discards']);
+                $this->message_buffer[] = $value->alias . ' took a card out of their codex.';
+                break;
+            }
+        }
+    }
 }
 
 function is_invalid_login($username, $aliases) {
@@ -294,7 +305,8 @@ function is_invalid_login($username, $aliases) {
  */
 function apply_mask($gamestate, $this_player) {
     foreach ($gamestate['players'] as $key => $value) {
-        $clone = clone $value;
+        $clone = clone $value; /* @var $clone \MyApp\Player */
+        $clone->deck_count = count($clone->hidden['deck']);
         unset($clone->hidden);
         if ($this_player != $clone->id) {
             unset($clone->private);

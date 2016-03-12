@@ -15,6 +15,7 @@ class Player {
     public $score = 0;
     public $workers = 0;
     public $gold = 0;
+    public $deck_count = 0;
     public $starter = '';
     public $specs = array();
     public $private = array( // other players cannot see this information

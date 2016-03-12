@@ -31,7 +31,8 @@ body {
   border: 1px black solid;
   height: 80vh;
   margin-bottom: 2vh;
-  padding: 5px; }
+  padding: 5px;
+  overflow-y: scroll; }
 
 .message {
   width: 90%; }

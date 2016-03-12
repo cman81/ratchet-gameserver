@@ -94,20 +94,35 @@
                     '<div class="table clearfix"><h2>Table</h2></div>' +
                     '<div class="hand clearfix"><h2>Hand</h2></div>' +
                     '<div class="actions"><h2>Actions</h2></div>' +
-                    '<div class="workers clearfix"><h2>Workers</h2></div>');
+                    '<div class="discards"><h2>Discards</h2><select class="discards" name="discards"></select></div>' +
+                    '<div class="workers"><h2>Workers</h2><select class="workers" name="workers"></select></div>' +
+                    '<div class="codex"><h2>Codex</h2><select class="codex" name="codex"></select></div>');
                 $('.game .stats').append('<div>Workers: ' + me.workers + '</div>');
                 $('.game .stats').append('<div>Gold: ' + me.gold + '</div>');
+                $('.game .stats').append('<div>Deck: ' + me.deck_count + ' Card' + ((me.deck_count == 1) ? '' : 's') + '</div>');
+                $('.game .hand h2').append(' (' + me.private.hand.length + ')');
                 for (var key in me.private.hand) {
                     var value = me.private.hand[key];
                     $('.game .hand').append('<img src="cards/' + value + '" class="float-left card-thumb" />');
                 }
+                $('.game .workers h2').append(' (' + me.private.workers.length + ')');
                 for (var key in me.private.workers) {
                     var value = me.private.workers[key];
-                    $('.game .workers').append('<img src="cards/' + value + '" class="float-left card-thumb" />');
+                    $('.game select.workers').append('<option value="' + key + '">' + value + '</option>');
                 }
                 for (var key in game.table) {
                     var value = game.table[key];
                     $('.game .table').append('<img src="cards/' + value + '" class="float-left card-thumb" />');
+                }
+                $('.game .codex h2').append(' (' + me.private.codex.length + ')');
+                for (var key in me.private.codex) {
+                    var value = me.private.codex[key];
+                    $('.game select.codex').append('<option value="' + key + '">' + value + '</option>');
+                }
+                $('.game .discards h2').append(' (' + me.private.discards.length + ')');
+                for (var key in me.private.discards) {
+                    var value = me.private.discards[key];
+                    $('.game select.discards').append('<option value="' + key + '">' + value + '</option>');
                 }
                 console.log(game);
             }
@@ -119,6 +134,7 @@
                 $('.game .actions').append('Hand Idx: <span class="hand-index"></span>');
                 $('.game .actions').append('<input type="button" class="discard-redraw" value="Discard/Draw Hand" />');
                 $('.game .actions').append('<input type="button" class="deploy" value="Deploy to Table" />');
+                $('.game .actions').append('<input type="button" class="tech" value="Tech from Codex" />');
             }
         });
     });

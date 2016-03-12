@@ -104,5 +104,18 @@
                 }
             ));
         });
+        $('.game').on('click', '.tech', function() {
+            conn.send(JSON.stringify(
+                {
+                    "game": {
+                        "op" : "transaction",
+                        "actions": [{
+                            'action': 'tech',
+                            'card_index': $('select.codex').val()
+                        }],
+                    }
+                }
+            ));
+        });
     });
 })(jQuery);
