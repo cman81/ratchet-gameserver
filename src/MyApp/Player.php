@@ -62,7 +62,7 @@ class Player {
         $this->private['discards'] = array();
         foreach ($cards as $value) {
             if (preg_match($pattern, $value)) {
-                $this->private['discards'][] = trim($value);
+                $this->private['discards'][] = new Card($value);
             }
         }
     }
@@ -86,10 +86,7 @@ class Player {
             foreach ($hero_begins_with as $v2) {
                 if (substr($value, 0, strlen($v2)) == $v2) {
                     $hero_found = TRUE;
-                    $this->heroes[] = array(
-                        'hero' => trim($value),
-                        'status' => 'waiting',
-                    );
+                    $this->heroes[] = new HeroCard($value);
                     break; // proceed to next card
                 }
             }
@@ -99,7 +96,7 @@ class Player {
                 foreach ($patterns as $pattern) {
                     if (preg_match($pattern, $value)) {
                         for ($i = 0; $i < 2; $i++) {
-                            $this->private['codex'][] = trim($value);
+                            $this->private['codex'][] = new Card($value);
                         }
                         break; // proceed to next card
                     }

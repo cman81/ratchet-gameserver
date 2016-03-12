@@ -6,7 +6,13 @@
     $(document).ready(function () {
         $('.game').on('click', '.hand .card-thumb', function() {
             console.log($(this));
-            $('.hand-index').html($(this).index('.hand .card-thumb'));
+            $('.selected.deck').html('hand');
+            $('.selected.index').html($(this).index('.hand .card-thumb'));
+        });
+        $('.game').on('click', '.heroes .card-thumb', function() {
+            console.log($(this));
+            $('.selected.deck').html('heroes');
+            $('.selected.index').html($(this).index('.heroes .card-thumb'));
         });
     });
 })(jQuery);

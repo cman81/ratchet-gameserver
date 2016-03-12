@@ -330,6 +330,7 @@ function unit_test() {
         'max_players' => 2,
         'lastupdated' => time(),
         'whos_turn' => 0,
+        'table' => array(),
     );
 
     $game['is_started'] = TRUE;
@@ -342,7 +343,7 @@ function unit_test() {
     $game['players'][1]->workers = 5;
 
 // generate a starter deck and codex for this player
-    foreach ($game['players'] as $key => $value) {
+    foreach ($game['players'] as $key => $value) { /* @var $value \MyApp\Player */
         $value->build_starter_deck();
         $value->build_codex();
 
@@ -354,6 +355,17 @@ function unit_test() {
         $value->move_card($value->private['hand'], 0, $value->private['workers']);
         $value->move_card($value->private['hand'], 0, $value->private['workers']);
         $value->move_card($value->private['hand'], 0, $value->private['workers']);
+
+        // deal out 5 cards to each player
+        for ($i = 0; $i < 5; $i++) {
+            $value->draw_card();
+        }
+
+        $value->move_card($value->heroes, 0, $game['table']);
+        $value->move_card($value->private['hand'], 0, $game['table']);
+        $value->move_card($value->private['hand'], 0, $game['table']);
+        $value->move_card($value->private['hand'], 0, $game['table']);
+        $a = 'a';
     }
 
 }

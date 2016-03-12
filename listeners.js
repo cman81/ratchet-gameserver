@@ -103,31 +103,31 @@
                 $('.game .stats').append('<div>Deck: ' + me.deck_count + ' Card' + ((me.deck_count == 1) ? '' : 's') + '</div>');
                 for (var key in me.heroes) {
                     var value = me.heroes[key];
-                    $('.game .heroes').append('<img src="cards/' + value.hero + '" class="float-left card-thumb ' + value.status + '" />');
+                    $('.game .heroes').append('<img src="cards/' + value.img + '" class="float-left card-thumb ' + value.status + '" />');
                 }
                 $('.game .hand h2').append(' (' + me.private.hand.length + ')');
                 for (var key in me.private.hand) {
                     var value = me.private.hand[key];
-                    $('.game .hand').append('<img src="cards/' + value + '" class="float-left card-thumb" />');
+                    $('.game .hand').append('<img src="cards/' + value.img + '" class="float-left card-thumb" />');
                 }
                 $('.game .workers h2').append(' (' + me.private.workers.length + ')');
                 for (var key in me.private.workers) {
                     var value = me.private.workers[key];
-                    $('.game select.workers').append('<option value="' + key + '">' + value + '</option>');
+                    $('.game select.workers').append('<option value="' + key + '">' + value.id + '</option>');
                 }
                 for (var key in game.table) {
                     var value = game.table[key];
-                    $('.game .table').append('<img src="cards/' + value + '" class="float-left card-thumb" />');
+                    $('.game .table').append('<img src="cards/' + value.img + '" class="float-left card-thumb" />');
                 }
                 $('.game .codex h2').append(' (' + me.private.codex.length + ')');
                 for (var key in me.private.codex) {
                     var value = me.private.codex[key];
-                    $('.game select.codex').append('<option value="' + key + '">' + value + '</option>');
+                    $('.game select.codex').append('<option value="' + key + '">' + value.id + '</option>');
                 }
                 $('.game .discards h2').append(' (' + me.private.discards.length + ')');
                 for (var key in me.private.discards) {
                     var value = me.private.discards[key];
-                    $('.game select.discards').append('<option value="' + key + '">' + value + '</option>');
+                    $('.game select.discards').append('<option value="' + key + '">' + value.id + '</option>');
                 }
                 console.log(game);
             }
@@ -136,7 +136,7 @@
                 $('.game .actions').append('<input type="button" class="gain-gold" value="Gain 1 Gold" />');
                 $('.game .actions').append('<input type="button" class="spend-gold" value="Spend 1 Gold" />');
                 $('.game .actions').append('<input type="button" class="recruit-worker" value="Recruit Worker" />');
-                $('.game .actions').append('Hand Idx: <span class="hand-index"></span>');
+                $('.game .actions').append('Selected Card: <span class="selected deck">hand</span>[<span class="selected index">0</span>]');
                 $('.game .actions').append('<input type="button" class="discard-redraw" value="Discard/Draw Hand" />');
                 $('.game .actions').append('<input type="button" class="deploy" value="Deploy to Table" />');
                 $('.game .actions').append('<input type="button" class="tech" value="Tech from Codex" />');

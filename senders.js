@@ -67,17 +67,19 @@
             ));
         });
         $('.game').on('click', '.recruit-worker', function() {
-            conn.send(JSON.stringify(
-                {
-                    "game": {
-                        "op" : "transaction",
-                        "actions": [{
-                            'action': 'recruit_worker',
-                            'card_index': $('.hand-index').html()
-                        }],
+            if ($('.selected.deck').html() == 'hand') {
+                conn.send(JSON.stringify(
+                    {
+                        "game": {
+                            "op" : "transaction",
+                            "actions": [{
+                                'action': 'recruit_worker',
+                                'card_index': $('.selected.index').html()
+                            }],
+                        }
                     }
-                }
-            ));
+                ));
+            }
         });
         $('.game').on('click', '.discard-redraw', function() {
             conn.send(JSON.stringify(
@@ -98,7 +100,8 @@
                         "op" : "transaction",
                         "actions": [{
                             'action': 'deploy',
-                            'card_index': $('.hand-index').html()
+                            'selected_deck': $('.selected.deck').html(),
+                            'card_index': $('.selected.index').html()
                         }],
                     }
                 }
