@@ -57,7 +57,7 @@ class Game {
             }
         }
     }
-    function action_discard_redraw($from, $settings) {
+    function action_discard_redraw($from, $settings = array()) {
         foreach ($this->players as $value) { /* @var $value Player */
             if ($value->id == $from) {
                 $old_hand_count = count($value->private['hand']);
@@ -81,7 +81,14 @@ class Game {
         $card_idx = intval($settings['card_index']);
         foreach ($this->players as $value) { /* @var $value Player */
             if ($value->id == $from) {
-                $value->move_card($value->private['hand'], $card_idx, $this->table);
+                if ($settings['selected_deck'] == 'hand') {
+                    $value->move_card($value->private['hand'], $card_idx, $this->table);
+                } elseif ($settings['selected_deck'] == 'heroes') {
+                    $value->heroes[$card_idx]->activate();
+                    $value->move_card($value->heroes, $card_idx, $this->table);
+                } else {
+                    return;
+                }
                 $this->message_buffer[] = $value->alias . ' deployed to the table.';
                 break;
             }

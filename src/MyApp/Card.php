@@ -12,6 +12,7 @@ namespace MyApp;
 class Card {
     public $id;
     public $img;
+    public $tags = array();
 
     public function __construct($img) {
         $this->img = trim($img);
@@ -20,5 +21,13 @@ class Card {
 }
 
 class HeroCard extends Card {
-    public $status = 'waiting';
+    public $status = 'waiting'; // waiting, active, or recovering
+    public $level = 0;
+
+    public function activate() {
+        if ($this->status == 'waiting') {
+            $this->status = 'active';
+            $this->level = 1;
+        }
+    }
 }

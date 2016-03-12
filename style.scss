@@ -41,6 +41,9 @@ body { height: 100%; }
   margin: 10px;
   cursor: pointer;
 }
+.heroes img.recovering {
+  filter: grayscale(1);
+}
 
 @media all and (max-width: 1024px) {
   .card-thumb { width: 150px; }

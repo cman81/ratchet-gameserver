@@ -256,9 +256,28 @@ function unit_test() {
     // Player 1: recruit a worker and bring out a card (assume it costs 2 cold)
     $game->action_gain_gold($game->players[0]->id, array('amount' => 4));
     $game->action_spend_gold($game->players[0]->id, array('amount' => 1));
-    $game->action_recruit_worker($game->players[0]->id, array('card_index' => 0));
+    $game->action_recruit_worker($game->players[0]->id, array(
+        'selected_deck' => 'hand',
+        'card_index' => 0
+    ));
     $game->action_spend_gold($game->players[0]->id, array('amount' => 2));
-    $game->action_deploy($game->players[0]->id, array('card_index' => 0));
+    $game->action_deploy($game->players[0]->id, array(
+        'selected_deck' => 'hand',
+        'card_index' => 0
+    ));
+    $game->action_discard_redraw($game->players[0]->id);
+
+
+    // Player 2: recruit your hero
+    $game->action_gain_gold($game->players[1]->id, array('amount' => 5));
+    $game->action_spend_gold($game->players[1]->id, array('amount' => 2));
+    $game->action_deploy($game->players[1]->id, array(
+        'selected_deck' => 'heroes',
+        'card_index' => 0
+    ));
+    $game->action_discard_redraw($game->players[1]->id);
 
     echo 'test complete';
 }
+
+unit_test();
