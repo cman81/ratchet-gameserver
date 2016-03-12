@@ -9,15 +9,7 @@ class Chat implements MessageComponentInterface {
     public function __construct() {
         $this->clients = new \SplObjectStorage;
         $this->aliases = array();
-        $this->game = array(
-            'players' => array(),
-            'is_started' => FALSE,
-            'min_players' => 2,
-            'max_players' => 2,
-            'lastupdated' => time(),
-            'whos_turn' => 0,
-            'table' => array(),
-        );
+        $this->game = new Game();
         $this->message_buffer = array();
     }
 
@@ -70,15 +62,7 @@ class Chat implements MessageComponentInterface {
         echo "Connection {$conn->resourceId} has disconnected\n";
 
         // also, just quit the game for now
-        $this->game = array(
-            'players' => array(),
-            'is_started' => FALSE,
-            'min_players' => 2,
-            'max_players' => 2,
-            'lastupdated' => time(),
-            'whos_turn' => 0,
-            'table' => array(),
-        );
+        $this->game = new Game();
         $this->send_gamestate();
     }
 
@@ -125,7 +109,7 @@ class Chat implements MessageComponentInterface {
     public function handle_game($json, $from) {
         if ($json['op'] == 'join') {
             // has the game already started?
-            if ($this->game['is_started']) {
+            if ($this->game->is_started) {
                 $from->send(json_encode(array(
                     'gameError' => 'The game has already started!'
                 )));
@@ -134,9 +118,9 @@ class Chat implements MessageComponentInterface {
             }
             // are we already playing?
             $alias = $this->aliases[$from->resourceId];
-            foreach ($this->game['players'] as $key => $value) {
+            foreach ($this->game->players as $key => $value) {
                 if ($value->alias == $alias) {
-                    $this->game['players'][$key]->id = $from->resourceId;
+                    $this->game->players[$key]->id = $from->resourceId;
                     $from->send(json_encode(array(
                         'gameError' => 'You are already playing!'
                     )));
@@ -147,34 +131,34 @@ class Chat implements MessageComponentInterface {
             }
 
             // take a seat if possible
-            if (count($this->game['players']) == $this->game['max_players']) {
+            if (count($this->game->players) == $this->game->max_players) {
                 $from->send(json_encode(array(
                     'gameError' => 'No seats available'
                 )));
                 echo $this->aliases[$from->resourceId] . " tried joining, but was unable to\n";
                 return;
             } else {
-                $this->game['players'][] = new Player(
+                $this->game->players[] = new Player(
                     $from->resourceId,
                     $this->aliases[$from->resourceId]
                 );
-                $this->game['lastupdated'] = time();
-                echo $this->aliases[$from->resourceId] . " joined the game as Player " . count($this->game['players']) . "\n";
+                $this->game->lastupdated = time();
+                echo $this->aliases[$from->resourceId] . " joined the game as Player " . count($this->game->players) . "\n";
             }
         }
         if ($json['op'] == 'start') {
-            $this->game['is_started'] = TRUE;
-            $this->game['table'] = array();
+            $this->game->is_started = TRUE;
+            $this->game->table = array();
 
             // determine turn order
-            shuffle($this->game['players']);
+            shuffle($this->game->players);
 
             // setup initial workers
-            $this->game['players'][0]->workers = 4;
-            $this->game['players'][1]->workers = 5;
+            $this->game->players[0]->workers = 4;
+            $this->game->players[1]->workers = 5;
 
             // generate a starter deck and codex for this player
-            foreach ($this->game['players'] as $key => $value) {
+            foreach ($this->game->players as $key => $value) {
                 $value->build_starter_deck();
                 $value->build_codex();
 
@@ -192,6 +176,7 @@ class Chat implements MessageComponentInterface {
                 if (method_exists($this, 'action_' . $value['action'])) {
                     $fnname = 'action_' . $value['action'];
                     $this->{$fnname}($from, $value);
+                    $this->game->lastupdated = time();
                 }
             }
         }
@@ -205,7 +190,7 @@ class Chat implements MessageComponentInterface {
     function send_gamestate() {
         foreach ($this->clients as $client) {
             $msg = json_encode(array(
-                'game' => apply_mask($this->game, $client->resourceId),
+                'game' => apply_mask(clone $this->game, $client->resourceId),
                 'messages' => $this->message_buffer,
             ));
             echo "Passing the following information to " . $this->aliases[$client->resourceId] . ":\n\n" . $msg . "\n\n";
@@ -218,7 +203,7 @@ class Chat implements MessageComponentInterface {
      */
     function action_gain_gold($from, $settings) {
         $amt = $settings['amount'];
-        foreach ($this->game['players'] as $value) {
+        foreach ($this->game->players as $value) {
             if ($value->id == $from->resourceId) {
                 $value->gold += $amt;
                 $this->message_buffer[] = $value->alias . ' gained 1 gold.';
@@ -228,7 +213,7 @@ class Chat implements MessageComponentInterface {
     }
     function action_spend_gold($from, $settings) {
         $amt = $settings['amount'];
-        foreach ($this->game['players'] as $value) {
+        foreach ($this->game->players as $value) {
             if ($value->id == $from->resourceId) {
                 $value->gold -= $amt;
                 $this->message_buffer[] = $value->alias . ' spent 1 gold.';
@@ -238,7 +223,7 @@ class Chat implements MessageComponentInterface {
     }
     function action_recruit_worker($from, $settings) {
         $card_idx = intval($settings['card_index']);
-        foreach ($this->game['players'] as $value) { /* @var $value Player */
+        foreach ($this->game->players as $value) { /* @var $value Player */
             if ($value->id == $from->resourceId) {
                 $value->gold--;
                 $value->workers++;
@@ -249,7 +234,7 @@ class Chat implements MessageComponentInterface {
         }
     }
     function action_discard_redraw($from, $settings) {
-        foreach ($this->game['players'] as $value) { /* @var $value Player */
+        foreach ($this->game->players as $value) { /* @var $value Player */
             if ($value->id == $from->resourceId) {
                 $old_hand_count = count($value->private['hand']);
                 $cards_to_draw = min($old_hand_count + 2, 5);
@@ -270,9 +255,9 @@ class Chat implements MessageComponentInterface {
     }
     function action_deploy($from, $settings) {
         $card_idx = intval($settings['card_index']);
-        foreach ($this->game['players'] as $value) { /* @var $value Player */
+        foreach ($this->game->players as $value) { /* @var $value Player */
             if ($value->id == $from->resourceId) {
-                $value->move_card($value->private['hand'], $card_idx, $this->game['table']);
+                $value->move_card($value->private['hand'], $card_idx, $this->game->table);
                 $this->message_buffer[] = $value->alias . ' deployed to the table.';
                 break;
             }
@@ -280,7 +265,7 @@ class Chat implements MessageComponentInterface {
     }
     function action_tech($from, $settings) {
         $card_idx = intval($settings['card_index']);
-        foreach ($this->game['players'] as $value) { /* @var $value Player */
+        foreach ($this->game->players as $value) { /* @var $value Player */
             if ($value->id == $from->resourceId) {
                 $value->move_card($value->private['codex'], $card_idx, $value->private['discards']);
                 $this->message_buffer[] = $value->alias . ' took a card out of their codex.';
@@ -304,46 +289,37 @@ function is_invalid_login($username, $aliases) {
  * In certain games, information must be hidden from the player
  */
 function apply_mask($gamestate, $this_player) {
-    foreach ($gamestate['players'] as $key => $value) {
+    foreach ($gamestate->players as $key => $value) {
         $clone = clone $value; /* @var $clone \MyApp\Player */
         $clone->deck_count = count($clone->hidden['deck']);
         unset($clone->hidden);
         if ($this_player != $clone->id) {
             unset($clone->private);
         } else {
-            $gamestate['me'] = $key;
+            $gamestate->me = $key;
         }
-        $gamestate['players'][$key] = $clone;
+        $gamestate->players[$key] = $clone;
     }
 
     return $gamestate;
 }
 
 function unit_test() {
-    $game = array(
-        'players' => array(
-            new Player(12, 'Christian'),
-            new Player(13, 'haha'),
-        ),
-        'is_started' => FALSE,
-        'min_players' => 2,
-        'max_players' => 2,
-        'lastupdated' => time(),
-        'whos_turn' => 0,
-        'table' => array(),
-    );
+    $game = new Game();
 
-    $game['is_started'] = TRUE;
+    $game->players[] = new Player(12, 'Christian');
+    $game->players[] = new Player(13, 'haha');
+    $game->is_started = TRUE;
 
 // determine turn order
-    shuffle($game['players']);
+    shuffle($game->players);
 
 // setup initial workers
-    $game['players'][0]->workers = 4;
-    $game['players'][1]->workers = 5;
+    $game->players[0]->workers = 4;
+    $game->players[1]->workers = 5;
 
 // generate a starter deck and codex for this player
-    foreach ($game['players'] as $key => $value) { /* @var $value \MyApp\Player */
+    foreach ($game->players as $key => $value) { /* @var $value \MyApp\Player */
         $value->build_starter_deck();
         $value->build_codex();
 
@@ -351,21 +327,15 @@ function unit_test() {
         for ($i = 0; $i < 5; $i++) {
             $value->draw_card();
         }
-
-        $value->move_card($value->private['hand'], 0, $value->private['workers']);
-        $value->move_card($value->private['hand'], 0, $value->private['workers']);
-        $value->move_card($value->private['hand'], 0, $value->private['workers']);
-
-        // deal out 5 cards to each player
-        for ($i = 0; $i < 5; $i++) {
-            $value->draw_card();
-        }
-
-        $value->move_card($value->heroes, 0, $game['table']);
-        $value->move_card($value->private['hand'], 0, $game['table']);
-        $value->move_card($value->private['hand'], 0, $game['table']);
-        $value->move_card($value->private['hand'], 0, $game['table']);
-        $a = 'a';
     }
+    $game->players[0]->move_card($game->players[0]->private['hand'], 0, $game->players[0]->private['workers']);
+    $game->players[0]->move_card($game->players[0]->private['hand'], 0, $game->players[0]->private['workers']);
+    $game->players[0]->move_card($game->players[0]->private['hand'], 0, $game->players[0]->private['workers']);
 
+    $game->players[1]->move_card($game->players[1]->heroes, 0, $game->table);
+    $game->players[1]->move_card($game->players[1]->private['hand'], 0, $game->table);
+    $game->players[1]->move_card($game->players[1]->private['hand'], 0, $game->table);
+    $game->players[1]->move_card($game->players[1]->private['hand'], 0, $game->table);
+
+    echo 'test complete';
 }
