@@ -173,15 +173,14 @@ class Chat implements MessageComponentInterface {
         if ($json['op'] == 'transaction') {
             echo "Received from " . $this->aliases[$from->resourceId] . ":\n\n" . json_encode($json) . "\n\n";
             foreach ($json['actions'] as $value) {
-                if (method_exists($this, 'action_' . $value['action'])) {
+                if (method_exists($this->game, 'action_' . $value['action'])) {
                     $fnname = 'action_' . $value['action'];
-                    $this->{$fnname}($from, $value);
+                    $this->game->{$fnname}($from->resourceId, $value);
                     $this->game->lastupdated = time();
                 }
             }
         }
         $this->send_gamestate();
-        $this->message_buffer = array();
     }
 
     /**
@@ -196,82 +195,7 @@ class Chat implements MessageComponentInterface {
             echo "Passing the following information to " . $this->aliases[$client->resourceId] . ":\n\n" . $msg . "\n\n";
             $client->send($msg);
         }
-    }
-
-    /**
-     * Game actions
-     */
-    function action_gain_gold($from, $settings) {
-        $amt = $settings['amount'];
-        foreach ($this->game->players as $value) {
-            if ($value->id == $from->resourceId) {
-                $value->gold += $amt;
-                $this->message_buffer[] = $value->alias . ' gained 1 gold.';
-                break;
-            }
-        }
-    }
-    function action_spend_gold($from, $settings) {
-        $amt = $settings['amount'];
-        foreach ($this->game->players as $value) {
-            if ($value->id == $from->resourceId) {
-                $value->gold -= $amt;
-                $this->message_buffer[] = $value->alias . ' spent 1 gold.';
-                break;
-            }
-        }
-    }
-    function action_recruit_worker($from, $settings) {
-        $card_idx = intval($settings['card_index']);
-        foreach ($this->game->players as $value) { /* @var $value Player */
-            if ($value->id == $from->resourceId) {
-                $value->gold--;
-                $value->workers++;
-                $value->move_card($value->private['hand'], $card_idx, $value->private['workers']);
-                $this->message_buffer[] = $value->alias . ' recruited a worker.';
-                break;
-            }
-        }
-    }
-    function action_discard_redraw($from, $settings) {
-        foreach ($this->game->players as $value) { /* @var $value Player */
-            if ($value->id == $from->resourceId) {
-                $old_hand_count = count($value->private['hand']);
-                $cards_to_draw = min($old_hand_count + 2, 5);
-
-                // discard your entire hand
-                $value->private['discards'] = array_merge($value->private['discards'], $value->private['hand']);
-                $value->private['hand'] = array();
-
-                // redraw
-                for ($i = 0; $i < $cards_to_draw; $i++) {
-                    $value->draw_card();
-                }
-
-                $this->message_buffer[] = $value->alias . ' discarded ' . $old_hand_count .  ' cards and drew ' . $cards_to_draw . ' cards.';
-                break;
-            }
-        }
-    }
-    function action_deploy($from, $settings) {
-        $card_idx = intval($settings['card_index']);
-        foreach ($this->game->players as $value) { /* @var $value Player */
-            if ($value->id == $from->resourceId) {
-                $value->move_card($value->private['hand'], $card_idx, $this->game->table);
-                $this->message_buffer[] = $value->alias . ' deployed to the table.';
-                break;
-            }
-        }
-    }
-    function action_tech($from, $settings) {
-        $card_idx = intval($settings['card_index']);
-        foreach ($this->game->players as $value) { /* @var $value Player */
-            if ($value->id == $from->resourceId) {
-                $value->move_card($value->private['codex'], $card_idx, $value->private['discards']);
-                $this->message_buffer[] = $value->alias . ' took a card out of their codex.';
-                break;
-            }
-        }
+        $this->message_buffer = array();
     }
 }
 
@@ -328,14 +252,13 @@ function unit_test() {
             $value->draw_card();
         }
     }
-    $game->players[0]->move_card($game->players[0]->private['hand'], 0, $game->players[0]->private['workers']);
-    $game->players[0]->move_card($game->players[0]->private['hand'], 0, $game->players[0]->private['workers']);
-    $game->players[0]->move_card($game->players[0]->private['hand'], 0, $game->players[0]->private['workers']);
 
-    $game->players[1]->move_card($game->players[1]->heroes, 0, $game->table);
-    $game->players[1]->move_card($game->players[1]->private['hand'], 0, $game->table);
-    $game->players[1]->move_card($game->players[1]->private['hand'], 0, $game->table);
-    $game->players[1]->move_card($game->players[1]->private['hand'], 0, $game->table);
+    // Player 1: recruit a worker and bring out a card (assume it costs 2 cold)
+    $game->action_gain_gold($game->players[0]->id, array('amount' => 4));
+    $game->action_spend_gold($game->players[0]->id, array('amount' => 1));
+    $game->action_recruit_worker($game->players[0]->id, array('card_index' => 0));
+    $game->action_spend_gold($game->players[0]->id, array('amount' => 2));
+    $game->action_deploy($game->players[0]->id, array('card_index' => 0));
 
     echo 'test complete';
 }
