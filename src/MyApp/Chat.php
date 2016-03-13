@@ -190,12 +190,12 @@ class Chat implements MessageComponentInterface {
         foreach ($this->clients as $client) {
             $msg = json_encode(array(
                 'game' => apply_mask(clone $this->game, $client->resourceId),
-                'messages' => $this->message_buffer,
+                'messages' => $this->game->message_buffer,
             ));
             echo "Passing the following information to " . $this->aliases[$client->resourceId] . ":\n\n" . $msg . "\n\n";
             $client->send($msg);
         }
-        $this->message_buffer = array();
+        $this->game->message_buffer = array();
     }
 }
 
@@ -279,5 +279,3 @@ function unit_test() {
 
     echo 'test complete';
 }
-
-unit_test();
