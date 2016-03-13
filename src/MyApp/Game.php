@@ -83,14 +83,19 @@ class Game {
         foreach ($this->players as $value) { /* @var $value Player */
             if ($value->id == $from) {
                 if ($settings['selected_deck'] == 'hand') {
+                    $cost = $value->private['hand'][$card_idx]->cost;
+                    $id = $value->private['hand'][$card_idx]->id;
                     $value->move_card($value->private['hand'], $card_idx, $this->table);
                 } elseif ($settings['selected_deck'] == 'heroes') {
+                    $cost = $value->heroes[$card_idx]->cost;
+                    $id = $value->heroes[$card_idx]->id;
                     $value->heroes[$card_idx]->activate();
                     $value->move_card($value->heroes, $card_idx, $this->table);
                 } else {
                     return;
                 }
-                $this->message_buffer[] = $value->alias . ' deployed to the table.';
+                $value->gold -= $cost;
+                $this->message_buffer[] = $value->alias . ' spent ' . $cost . ' gold and deployed ' . $id . ' to the table.';
                 break;
             }
         }
