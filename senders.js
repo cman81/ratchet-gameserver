@@ -56,6 +56,19 @@
                 }
             ));
         });
+        $('.game').on('click', '.gain-upkeep-gold', function() {
+            conn.send(JSON.stringify(
+                {
+                    "game": {
+                        "op" : "transaction",
+                        "actions": [{
+                            'action': 'gain_gold',
+                            'amount': parseInt($('.total-workers').html())
+                        }]
+                    }
+                }
+            ));
+        });
         $('.game').on('click', '.spend-gold', function() {
             conn.send(JSON.stringify(
                 {

@@ -31,7 +31,7 @@ class Game {
         foreach ($this->players as $value) {
             if ($value->id == $from) {
                 $value->gold += $amt;
-                $this->message_buffer[] = $value->alias . ' gained 1 gold.';
+                $this->message_buffer[] = $value->alias . ' gained ' . $amt . ' gold.';
                 break;
             }
         }
@@ -41,7 +41,7 @@ class Game {
         foreach ($this->players as $value) {
             if ($value->id == $from) {
                 $value->gold -= $amt;
-                $this->message_buffer[] = $value->alias . ' spent 1 gold.';
+                $this->message_buffer[] = $value->alias . ' spent ' . $amt . ' gold.';
                 break;
             }
         }

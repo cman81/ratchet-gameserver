@@ -99,8 +99,8 @@
                     '<div class="workers"><h2>Workers</h2><select class="workers" name="workers"></select></div>' +
                     '<div class="codex"><h2>Codex</h2><select class="codex" name="codex"></select></div>');
                 $('.game .stats').append('<div>Base HP: ' + me.buildings.base.hp + '</div>');
-                $('.game .stats').append('<div>Workers: ' + me.workers + '</div>');
-                $('.game .stats').append('<div>Gold: ' + me.gold + '</div>');
+                $('.game .stats').append('<div>Workers: <span class="total-workers">' + me.workers + '</span></div>');
+                $('.game .stats').append('<div>Gold: <span class="total-gold">' + me.gold + '</span></div>');
                 $('.game .stats').append('<div>Deck: ' + me.deck_count + ' Card' + ((me.deck_count == 1) ? '' : 's') + '</div>');
                 for (var key in me.heroes) {
                     var value = me.heroes[key];
@@ -134,13 +134,18 @@
             }
 
             function presentActions(game) {
-                $('.game .actions').append('<input type="button" class="gain-gold" value="Gain 1 Gold" />');
-                $('.game .actions').append('<input type="button" class="spend-gold" value="Spend 1 Gold" />');
-                $('.game .actions').append('<input type="button" class="recruit-worker" value="Recruit Worker" />');
-                $('.game .actions').append('Selected Card: <span class="selected deck">hand</span>[<span class="selected index">0</span>]');
-                $('.game .actions').append('<input type="button" class="discard-redraw" value="Discard/Draw Hand" />');
-                $('.game .actions').append('<input type="button" class="deploy" value="Deploy to Table" />');
-                $('.game .actions').append('<input type="button" class="tech" value="Tech from Codex" />');
+                $('.game .actions').append('<p class="main">' +
+                    '<input type="button" class="gain-upkeep-gold" value="Gain Upkeep Gold" />' +
+                    '<input type="button" class="recruit-worker hide-if-broke" value="Recruit Worker" />' +
+                    '<input type="button" class="discard-redraw" value="Discard/Draw Hand" />' +
+                    '<input type="button" class="deploy" value="Deploy to Table" />' +
+                    '</p>');
+                $('.game .actions').append('<p class="misc">' +
+                    '<input type="button" class="gain-gold" value="Gain 1 Gold" />' +
+                    '<input type="button" class="spend-gold hide-if-broke" value="Spend 1 Gold" />' +
+                    'Selected Card: <span class="selected deck">hand</span>[<span class="selected index">0</span>]' +
+                    '</p>');
+                $('.game div.codex').append('<input type="button" class="tech" value="Tech from Codex" />');
             }
         });
     });
