@@ -124,10 +124,10 @@
                 }
                 for (var key in game.players) {
                     var value = game.players[key];
-                    $('.game div.table').append('<div class="battlefield player-' + key + ' clearfix"><h2>' + value.alias + '</h2></div>');
+                    $('.game div.table').append('<div class="battlefield' + ((game.me == key) ? ' me' : '') + ' clearfix"><h2>' + value.alias + '</h2></div>');
                     for (var k in value.battlefield) {
                         var v = value.battlefield[k];
-                        $('.game div.table .player-' + key).append('<img src="cards/' + v.img + '" class="float-left card-thumb" />');
+                        $('.game .battlefield').eq(key).append('<img src="cards/' + v.img + '" class="float-left card-thumb" />');
                     }
                 }
                 $('.game h2.codex').append(' (' + me.private.codex.length + ')');
@@ -144,17 +144,18 @@
             }
 
             function presentActions(game) {
-                $('.game div.actions').append('<p class="main">' +
+                $('.game div.actions').append('<p class="main">Game actions:' +
                     '<input type="button" class="gain-upkeep-gold" value="Gain Upkeep Gold" />' +
-                    '<input type="button" class="recruit-worker hide-if-broke" value="Recruit Worker" />' +
                     '<input type="button" class="discard-redraw" value="Discard/Draw Hand" />' +
-                    '<input type="button" class="deploy" value="Deploy to Table" />' +
                     '<input type="button" class="end-turn" value="End Turn" />' +
                     '</p>');
-                $('.game div.actions').append('<p class="misc">' +
+                $('.game div.actions').append('<p class="card">Card: Player <span class="selected player">0</span> <span class="selected deck">hand</span>[<span class="selected index">0</span>] actions:' +
+                    '<input type="button" class="recruit-worker" value="Recruit Worker" />' +
+                    '<input type="button" class="deploy" value="Deploy to Table" />' +
+                    '</p>');
+                $('.game div.actions').append('<p class="misc">Misc actions' +
                     '<input type="button" class="gain-gold" value="Gain 1 Gold" />' +
                     '<input type="button" class="spend-gold hide-if-broke" value="Spend 1 Gold" />' +
-                    'Selected Card: <span class="selected deck">hand</span>[<span class="selected index">0</span>]' +
                     '</p>');
                 $('.game div.codex').append('<input type="button" class="tech" value="Tech from Codex" />');
             }

@@ -16,6 +16,13 @@
             $('.selected.index').html($(this).index('.heroes .card-thumb'));
             $('.game').accordion("option", "active", 4);
         });
+        $('.game').on('click', '.battlefield .card-thumb', function() {
+            console.log($(this));
+            $('.selected.player').html($(this).parent().index('.battlefield'));
+            $('.selected.deck').html('battlefield');
+            $('.selected.index').html($(this).index('.battlefield:eq(' + $('.selected.player').html() + ') .card-thumb'));
+            $('.game').accordion("option", "active", 4);
+        });
         $('.game').accordion({ heightStyle: "content" });
     });
 })(jQuery);

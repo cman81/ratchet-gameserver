@@ -110,18 +110,20 @@
             ));
         });
         $('.game').on('click', '.deploy', function() {
-            conn.send(JSON.stringify(
-                {
-                    "game": {
-                        "op" : "transaction",
-                        "actions": [{
-                            'action': 'deploy',
-                            'selected_deck': $('.selected.deck').html(),
-                            'card_index': $('.selected.index').html()
-                        }],
+            if ($('.selected.deck').html() == 'hand' || $('.selected.deck').html() == 'heroes') {
+                conn.send(JSON.stringify(
+                    {
+                        "game": {
+                            "op" : "transaction",
+                            "actions": [{
+                                'action': 'deploy',
+                                'selected_deck': $('.selected.deck').html(),
+                                'card_index': $('.selected.index').html()
+                            }]
+                        }
                     }
-                }
-            ));
+                ));
+            }
         });
         $('.game').on('click', '.tech', function() {
             conn.send(JSON.stringify(
