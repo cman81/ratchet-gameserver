@@ -187,12 +187,15 @@ class Chat implements MessageComponentInterface {
      * Send the current game state
      */
     function send_gamestate() {
+        global $argv;
         foreach ($this->clients as $client) {
             $msg = json_encode(array(
                 'game' => apply_mask(clone $this->game, $client->resourceId),
                 'messages' => $this->game->message_buffer,
             ));
-            echo "Passing the following information to " . $this->aliases[$client->resourceId] . ":\n\n" . $msg . "\n\n";
+            if (in_array('debug', $argv)) {
+                echo "Passing the following information to " . $this->aliases[$client->resourceId] . ":\n\n" . $msg . "\n\n";
+            }
             $client->send($msg);
         }
         $this->game->message_buffer = array();

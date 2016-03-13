@@ -20,7 +20,9 @@ class Card {
         $this->id = substr($this->img, 0, -4);
         $pattern = '/\w*-(\d{1,2})-.*/';
         preg_match($pattern, $this->img, $matches);
-        $this->cost = intval($matches[1]);
+        if (isset($matches[1])) {
+            $this->cost = intval($matches[1]);
+        }
     }
 }
 
@@ -42,4 +44,8 @@ class HeroCard extends UnitCard {
 
 class UnitCard extends Card {
     public $patrol = 'none'; // none, squad leader, elite, scavenger, technician, lookout
+
+    public function __construct($img) {
+        parent::__construct($img);
+    }
 }
