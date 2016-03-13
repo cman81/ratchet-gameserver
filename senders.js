@@ -9,7 +9,7 @@
             conn.close();
             $('.output').append('<p>Logged out.</p>');
             $('.hide-after-login').show();
-            $(this).hide();
+            $('.show-after-login').hide();
         });
         $('.send-button').click(function(ev) {
             ev.preventDefault();
@@ -28,7 +28,10 @@
         $('.play-button').click(function() {
             conn.send(JSON.stringify(
                 {
-                    "game": { "op": "join" }
+                    "game": {
+                        "op": "join",
+                        "team": $('select.team').val()
+                    }
                 }
             ));
         });

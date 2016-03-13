@@ -17,6 +17,7 @@ class Game {
     public $lastupdated;
     public $whos_turn = 0;
     public $table = array();
+    public $message_buffer = array();
 
     public function __construct() {
         $this->lastupdated = time();

@@ -32,25 +32,43 @@ class Player {
     public function __construct($id, $alias, $starter = FALSE, $specs = FALSE) {
         $this->id = $id;
         $this->alias = $alias;
-        if (!$this->starter = $starter && $this->specs = $specs) {
-            $team = array(
-                array(
-                    'starter' => 'red',
-                    'specs' => array('anarchy', 'fire', 'blood'),
-                ),
-                array(
-                    'starter' => 'white',
-                    'specs' => array('discipline', 'ninjutsu', 'strength'),
-                ),
-                array(
-                    'starter' => 'black',
-                    'specs' => array('demonology', 'disease', 'necromancy'),
-                ),
-            );
-            $pick = array_rand($team);
-            $team = $team[$pick];
+        $teams = array(
+            'mono_red' => array(
+                'starter' => 'red',
+                'specs' => array('anarchy', 'fire', 'blood'),
+            ),
+            'mono_white' => array(
+                'starter' => 'white',
+                'specs' => array('discipline', 'ninjutsu', 'strength'),
+            ),
+            'mono_black' => array(
+                'starter' => 'black',
+                'specs' => array('demonology', 'disease', 'necromancy'),
+            ),
+            'mono_green' => array(
+                'starter' => 'green',
+                'specs' => array('balance', 'feral', 'growth'),
+            ),
+            'mono_purple' => array(
+                'starter' => 'purple',
+                'specs' => array('past', 'present', 'future'),
+            ),
+            'mono_blue' => array(
+                'starter' => 'blue',
+                'specs' => array('law', 'peace', 'truth'),
+            ),
+        );
+        if (!$starter) { // random pre-built team
+            $pick = array_rand($teams);
+            $team = $teams[$pick];
             $this->starter = $team['starter'];
             $this->specs = $team['specs'];
+        } elseif (!$specs) { // pre-built-team
+            $this->starter = $teams[$starter]['starter'];
+            $this->specs = $teams[$starter]['specs'];
+        } else { // custom team
+            $this->starter = $starter;
+            $this->specs = $specs;
         }
     }
 

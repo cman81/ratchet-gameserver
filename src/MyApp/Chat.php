@@ -140,7 +140,8 @@ class Chat implements MessageComponentInterface {
             } else {
                 $this->game->players[] = new Player(
                     $from->resourceId,
-                    $this->aliases[$from->resourceId]
+                    $this->aliases[$from->resourceId],
+                    $json['team']
                 );
                 $this->game->lastupdated = time();
                 echo $this->aliases[$from->resourceId] . " joined the game as Player " . count($this->game->players) . "\n";

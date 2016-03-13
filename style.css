@@ -59,6 +59,9 @@ body {
 .heroes img.recovering {
   filter: grayscale(1); }
 
+.show-after-login {
+  display: none; }
+
 @media all and (max-width: 1024px) {
   .card-thumb {
     width: 150px; } }

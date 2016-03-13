@@ -84,7 +84,7 @@
             };
 
             $('.hide-after-login').hide();
-            $('.logout-button').show();
+            $('.show-after-login').show();
 
             // TODO: how do I put the below functions in a separate file?
             function drawGameState(game) {
