@@ -117,4 +117,13 @@ class Game {
             }
         }
     }
+    function action_patrol($from, $settings) {
+        $card_idx = intval($settings['card_index']);
+        foreach ($this->players as $key => $value) { /* @var $value Player */
+            if ($value->id == $from) {
+                $value->battlefield[$card_idx]->patrol = $settings['patrol'];
+                $this->message_buffer[] = $value->alias . ' ended their turn.';
+            }
+        }
+    }
 }

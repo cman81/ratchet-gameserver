@@ -24,7 +24,7 @@ class Card {
     }
 }
 
-class HeroCard extends Card {
+class HeroCard extends UnitCard {
     public $status = 'waiting'; // waiting, active, or recovering
     public $level = 0;
 
@@ -38,4 +38,8 @@ class HeroCard extends Card {
             $this->level = 1;
         }
     }
+}
+
+class UnitCard extends Card {
+    public $patrol = 'none'; // none, squad leader, elite, scavenger, technician, lookout
 }

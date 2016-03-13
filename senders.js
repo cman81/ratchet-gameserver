@@ -110,18 +110,20 @@
             ));
         });
         $('.game').on('click', '.deploy', function() {
-            conn.send(JSON.stringify(
-                {
-                    "game": {
-                        "op" : "transaction",
-                        "actions": [{
-                            'action': 'deploy',
-                            'selected_deck': $('.selected.deck').html(),
-                            'card_index': $('.selected.index').html()
-                        }],
+            if ($('.selected.deck').html() == 'hand' || $('.selected.deck').html() == 'heroes') {
+                conn.send(JSON.stringify(
+                    {
+                        "game": {
+                            "op" : "transaction",
+                            "actions": [{
+                                'action': 'deploy',
+                                'selected_deck': $('.selected.deck').html(),
+                                'card_index': $('.selected.index').html()
+                            }]
+                        }
                     }
-                }
-            ));
+                ));
+            }
         });
         $('.game').on('click', '.tech', function() {
             conn.send(JSON.stringify(
@@ -145,6 +147,23 @@
                     }
                 }
             ));
+        });
+        $('.game').on('click', 'input.patrol', function() {
+            if ($('.selected.deck').html() == 'battlefield') {
+                conn.send(JSON.stringify(
+                    {
+                        "game": {
+                            "op" : "transaction",
+                            "actions": [{
+                                'action': 'patrol',
+                                'selected_player': $('.selected.player').html(),
+                                'card_index': $('.selected.index').html(),
+                                'patrol': $('select.patrol').val().toLowerCase()
+                            }]
+                        }
+                    }
+                ));
+            }
         });
     });
 })(jQuery);
