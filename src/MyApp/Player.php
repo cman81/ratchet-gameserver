@@ -19,6 +19,31 @@ class Player {
     public $starter = '';
     public $specs = array();
     public $heroes = array();
+    public $buildings = array(
+        'base' => array(
+            'status' => 'built',
+            'hp' => 20,
+        ),
+        'tech1' => array(
+            'required_gold' => 1,
+            'required_workers' => 6,
+            'status' => 'inactive',
+            'hp' => 5
+        ),
+        'tech2' => array(
+            'required_gold' => 4,
+            'required_workers' => 8,
+            'status' => 'inactive',
+            'hp' => 5
+        ),
+        'tech3' => array(
+            'required_gold' => 5,
+            'required_workers' => 10,
+            'status' => 'inactive',
+            'hp' => 5
+        ),
+        'addon' => array()
+    );
     public $private = array( // other players cannot see this information
         'hand' => array(),
         'discards' => array(),

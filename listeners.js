@@ -98,6 +98,7 @@
                     '<div class="discards"><h2>Discards</h2><select class="discards" name="discards"></select></div>' +
                     '<div class="workers"><h2>Workers</h2><select class="workers" name="workers"></select></div>' +
                     '<div class="codex"><h2>Codex</h2><select class="codex" name="codex"></select></div>');
+                $('.game .stats').append('<div>Base HP: ' + me.buildings.base.hp + '</div>');
                 $('.game .stats').append('<div>Workers: ' + me.workers + '</div>');
                 $('.game .stats').append('<div>Gold: ' + me.gold + '</div>');
                 $('.game .stats').append('<div>Deck: ' + me.deck_count + ' Card' + ((me.deck_count == 1) ? '' : 's') + '</div>');
