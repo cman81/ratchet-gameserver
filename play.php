@@ -12,7 +12,9 @@
     <meta charset="UTF-8">
     <title>Instant Chat!</title>
     <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="stylesheet" type="text/css" href="//code.jquery.com/ui/1.11.4/themes/hot-sneaks/jquery-ui.css" />
     <script src="//code.jquery.com/jquery-2.2.1.min.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
     <script src="helpers.js"></script>
     <script src="listeners.js"></script>
     <script src="senders.js"></script>

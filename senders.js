@@ -136,5 +136,15 @@
                 }
             ));
         });
+        $('.game').on('click', '.end-turn', function() {
+            conn.send(JSON.stringify(
+                {
+                    "game": {
+                        "op" : "transaction",
+                        "actions": [{ 'action': 'end_turn' }]
+                    }
+                }
+            ));
+        });
     });
 })(jQuery);

@@ -8,12 +8,15 @@
             console.log($(this));
             $('.selected.deck').html('hand');
             $('.selected.index').html($(this).index('.hand .card-thumb'));
+            $('.game').accordion("option", "active", 4);
         });
         $('.game').on('click', '.heroes .card-thumb', function() {
             console.log($(this));
             $('.selected.deck').html('heroes');
             $('.selected.index').html($(this).index('.heroes .card-thumb'));
+            $('.game').accordion("option", "active", 4);
         });
+        $('.game').accordion({ heightStyle: "content" });
     });
 })(jQuery);
 

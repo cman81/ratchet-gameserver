@@ -16,7 +16,6 @@ class Game {
     public $max_players = 2;
     public $lastupdated;
     public $whos_turn = 0;
-    public $table = array();
     public $message_buffer = array();
 
     public function __construct() {
@@ -85,17 +84,17 @@ class Game {
                 if ($settings['selected_deck'] == 'hand') {
                     $cost = $value->private['hand'][$card_idx]->cost;
                     $id = $value->private['hand'][$card_idx]->id;
-                    $value->move_card($value->private['hand'], $card_idx, $this->table);
+                    $value->move_card($value->private['hand'], $card_idx, $value->battlefield);
                 } elseif ($settings['selected_deck'] == 'heroes') {
                     $cost = $value->heroes[$card_idx]->cost;
                     $id = $value->heroes[$card_idx]->id;
                     $value->heroes[$card_idx]->activate();
-                    $value->move_card($value->heroes, $card_idx, $this->table);
+                    $value->move_card($value->heroes, $card_idx, $value->battlefield);
                 } else {
                     return;
                 }
                 $value->gold -= $cost;
-                $this->message_buffer[] = $value->alias . ' spent ' . $cost . ' gold and deployed ' . $id . ' to the table.';
+                $this->message_buffer[] = $value->alias . ' spent ' . $cost . ' gold and deployed ' . $id . ' to the battlefield.';
                 break;
             }
         }
@@ -107,6 +106,14 @@ class Game {
                 $value->move_card($value->private['codex'], $card_idx, $value->private['discards']);
                 $this->message_buffer[] = $value->alias . ' took a card out of their codex.';
                 break;
+            }
+        }
+    }
+    function action_end_turn($from, $settings) {
+        foreach ($this->players as $key => $value) { /* @var $value Player */
+            if ($value->id == $from) {
+                $this->whos_turn = ++$key % count($this->players);
+                $this->message_buffer[] = $value->alias . ' ended their turn.';
             }
         }
     }

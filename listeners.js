@@ -75,6 +75,7 @@
                     } else {
                         drawGameState(response.game);
                         presentActions(response.game);
+                        $('.game').accordion('refresh');
                     }
                     for (var key in response.messages) {
                         var value = response.messages[key];
@@ -90,42 +91,51 @@
             function drawGameState(game) {
                 var me = game.players[game.me];
                 $('.game').html('' +
-                    '<div class="stats"><h2>Stats</h2></div>' +
-                    '<div class="heroes clearfix"><h2>Heroes</h2></div>' +
-                    '<div class="table clearfix"><h2>Table</h2></div>' +
-                    '<div class="hand clearfix"><h2>Hand</h2></div>' +
-                    '<div class="actions"><h2>Actions</h2></div>' +
-                    '<div class="discards"><h2>Discards</h2><select class="discards" name="discards"></select></div>' +
-                    '<div class="workers"><h2>Workers</h2><select class="workers" name="workers"></select></div>' +
-                    '<div class="codex"><h2>Codex</h2><select class="codex" name="codex"></select></div>');
-                $('.game .stats').append('<div>Base HP: ' + me.buildings.base.hp + '</div>');
-                $('.game .stats').append('<div>Workers: <span class="total-workers">' + me.workers + '</span></div>');
-                $('.game .stats').append('<div>Gold: <span class="total-gold">' + me.gold + '</span></div>');
-                $('.game .stats').append('<div>Deck: ' + me.deck_count + ' Card' + ((me.deck_count == 1) ? '' : 's') + '</div>');
+                    '<h2 class="stats">Stats</h2><div class="stats"></div>' +
+                    '<h2 class="heroes">Heroes</h2><div class="heroes clearfix"></div>' +
+                    '<h2 class="table">Table</h2><div class="table clearfix"></div>' +
+                    '<h2 class="hand">Hand</h2><div class="hand clearfix"></div>' +
+                    '<h2 class="actions">Actions</h2><div class="actions"></div>' +
+                    '<h2 class="misc">Misc</h2><div class="misc">' +
+                        '<h2 class="discards">Discards</h2><div class="discards"><select class="discards" name="discards"></select></div>' +
+                        '<h2 class="workers">Workers</h2><div class="workers"><select class="workers" name="workers"></select></div>' +
+                        '<h2 class="codex">Codex</h2><div class="codex"><select class="codex" name="codex"></select></div>' +
+                    '</div>');
+                if (game.me == game.whos_turn) {
+                    $('.game h2.stats').append(' (My Turn)');
+                }
+                $('.game div.stats').append('<div>Base HP: ' + me.buildings.base.hp + '</div>');
+                $('.game div.stats').append('<div>Workers: <span class="total-workers">' + me.workers + '</span></div>');
+                $('.game div.stats').append('<div>Gold: <span class="total-gold">' + me.gold + '</span></div>');
+                $('.game div.stats').append('<div>Deck: ' + me.deck_count + ' Card' + ((me.deck_count == 1) ? '' : 's') + '</div>');
                 for (var key in me.heroes) {
                     var value = me.heroes[key];
-                    $('.game .heroes').append('<img src="cards/' + value.img + '" class="float-left card-thumb ' + value.status + '" />');
+                    $('.game div.heroes').append('<img src="cards/' + value.img + '" class="float-left card-thumb ' + value.status + '" />');
                 }
-                $('.game .hand h2').append(' (' + me.private.hand.length + ')');
+                $('.game h2.hand').append(' (' + me.private.hand.length + ')');
                 for (var key in me.private.hand) {
                     var value = me.private.hand[key];
-                    $('.game .hand').append('<img src="cards/' + value.img + '" class="float-left card-thumb" />');
+                    $('.game div.hand').append('<img src="cards/' + value.img + '" class="float-left card-thumb" />');
                 }
-                $('.game .workers h2').append(' (' + me.private.workers.length + ')');
+                $('.game h2.workers').append(' (' + me.private.workers.length + ')');
                 for (var key in me.private.workers) {
                     var value = me.private.workers[key];
                     $('.game select.workers').append('<option value="' + key + '">' + value.id + '</option>');
                 }
-                for (var key in game.table) {
-                    var value = game.table[key];
-                    $('.game .table').append('<img src="cards/' + value.img + '" class="float-left card-thumb" />');
+                for (var key in game.players) {
+                    var value = game.players[key];
+                    $('.game div.table').append('<div class="battlefield player-' + key + ' clearfix"><h2>' + value.alias + '</h2></div>');
+                    for (var k in value.battlefield) {
+                        var v = value.battlefield[k];
+                        $('.game div.table .player-' + key).append('<img src="cards/' + v.img + '" class="float-left card-thumb" />');
+                    }
                 }
-                $('.game .codex h2').append(' (' + me.private.codex.length + ')');
+                $('.game h2.codex').append(' (' + me.private.codex.length + ')');
                 for (var key in me.private.codex) {
                     var value = me.private.codex[key];
                     $('.game select.codex').append('<option value="' + key + '">' + value.id + '</option>');
                 }
-                $('.game .discards h2').append(' (' + me.private.discards.length + ')');
+                $('.game h2.discards').append(' (' + me.private.discards.length + ')');
                 for (var key in me.private.discards) {
                     var value = me.private.discards[key];
                     $('.game select.discards').append('<option value="' + key + '">' + value.id + '</option>');
@@ -134,13 +144,14 @@
             }
 
             function presentActions(game) {
-                $('.game .actions').append('<p class="main">' +
+                $('.game div.actions').append('<p class="main">' +
                     '<input type="button" class="gain-upkeep-gold" value="Gain Upkeep Gold" />' +
                     '<input type="button" class="recruit-worker hide-if-broke" value="Recruit Worker" />' +
                     '<input type="button" class="discard-redraw" value="Discard/Draw Hand" />' +
                     '<input type="button" class="deploy" value="Deploy to Table" />' +
+                    '<input type="button" class="end-turn" value="End Turn" />' +
                     '</p>');
-                $('.game .actions').append('<p class="misc">' +
+                $('.game div.actions').append('<p class="misc">' +
                     '<input type="button" class="gain-gold" value="Gain 1 Gold" />' +
                     '<input type="button" class="spend-gold hide-if-broke" value="Spend 1 Gold" />' +
                     'Selected Card: <span class="selected deck">hand</span>[<span class="selected index">0</span>]' +

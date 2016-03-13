@@ -44,6 +44,7 @@ class Player {
         ),
         'addon' => array()
     );
+    public $battlefield = array();
     public $private = array( // other players cannot see this information
         'hand' => array(),
         'discards' => array(),
