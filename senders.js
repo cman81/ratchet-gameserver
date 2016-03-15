@@ -181,5 +181,17 @@
                 ));
             }
         });
+        $('.game').on('click', '.draw', function() {
+            conn.send(JSON.stringify(
+                {
+                    "game": {
+                        "op" : "transaction",
+                        "actions": [{
+                            'action': 'draw'
+                        }],
+                    }
+                }
+            ));
+        });
     });
 })(jQuery);

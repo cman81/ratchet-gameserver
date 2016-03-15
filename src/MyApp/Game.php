@@ -49,10 +49,10 @@ class Game {
         $card_idx = intval($settings['card_index']);
         foreach ($this->players as $value) { /* @var $value Player */
             if ($value->id == $from) {
-                if (!locate_card('green-3-tech0-rich-earth', $value->battlefield)) {
-                    $value->gold--;
-                } else {
+                if (locate_card('green-3-tech0-rich-earth', $value->battlefield)) {
                     $this->message_buffer[] = $value->alias . ' has Rich Earth, so workers are free!';
+                } else {
+                    $value->gold--;
                 }
                 $value->workers++;
                 $value->move_card($value->private['hand'], $card_idx, $value->private['workers']);
@@ -144,6 +144,16 @@ class Game {
             }
             $this->message_buffer[] = $value->alias . ' discarded ' . $id . '.';
             break;
+        }
+    }
+    function action_draw($from, $settings = array()) {
+        foreach ($this->players as $value) { /* @var $value Player */
+            if ($value->id == $from) {
+                $value->draw_card();
+
+                $this->message_buffer[] = $value->alias . ' drew a card.';
+                break;
+            }
         }
     }
 }

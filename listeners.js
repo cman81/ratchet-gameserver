@@ -174,6 +174,7 @@
                     '<p class="misc">Misc actions' +
                         '<input type="button" class="gain-gold" value="Gain 1 Gold" />' +
                         '<input type="button" class="spend-gold hide-if-broke" value="Spend 1 Gold" />' +
+                        '<input type="button" class="draw" value="Draw a Card" />' +
                     '</p>');
                 $('.game div.codex').append('<input type="button" class="tech" value="Tech from Codex" />');
             }
