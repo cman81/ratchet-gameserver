@@ -231,6 +231,18 @@ function apply_mask($gamestate, $this_player) {
     return $gamestate;
 }
 
+/**
+ * Locate a card within a deck
+ */
+function locate_card($id, $cards) {
+    foreach ($cards as $card) { /* @var $card Card */
+        if ($card->id == $id) {
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
 function unit_test() {
     $game = new Game();
 

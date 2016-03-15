@@ -104,6 +104,7 @@
                 if (game.me == game.whos_turn) {
                     $('.game h2.stats').append(' (My Turn)');
                 }
+                $('.game h2.stats').append(' ' + me.gold + ' gold');
                 $('.game div.stats').append('<div>Base HP: ' + me.buildings.base.hp + '</div>');
                 $('.game div.stats').append('<div>Workers: <span class="total-workers">' + me.workers + '</span></div>');
                 $('.game div.stats').append('<div>Gold: <span class="total-gold">' + me.gold + '</span></div>');
@@ -167,6 +168,7 @@
                             '<option>Lookout</option>' +
                         '</select>' +
                         '<input type="button" class="patrol" value="Patrol" />' +
+                        '<input type="button" class="discard" value="Discard" />' +
                     '</p>');
                 $('.game div.actions').append(
                     '<p class="misc">Misc actions' +

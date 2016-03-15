@@ -49,7 +49,11 @@ class Game {
         $card_idx = intval($settings['card_index']);
         foreach ($this->players as $value) { /* @var $value Player */
             if ($value->id == $from) {
-                $value->gold--;
+                if (!locate_card('green-3-tech0-rich-earth', $value->battlefield)) {
+                    $value->gold--;
+                } else {
+                    $this->message_buffer[] = $value->alias . ' has Rich Earth, so workers are free!';
+                }
                 $value->workers++;
                 $value->move_card($value->private['hand'], $card_idx, $value->private['workers']);
                 $this->message_buffer[] = $value->alias . ' recruited a worker.';
@@ -124,6 +128,22 @@ class Game {
                 $value->battlefield[$card_idx]->patrol = $settings['patrol'];
                 $this->message_buffer[] = $value->alias . ' ended their turn.';
             }
+        }
+    }
+    function action_discard($from, $settings) {
+        $card_idx = intval($settings['card_index']);
+        foreach ($this->players as $key => $value) { /* @var $value Player */
+            if ($settings['selected_deck'] == 'hand') {
+                $id = $value->private['hand'][$card_idx]->id;
+                $value->move_card($value->private['hand'], $card_idx, $value->private['discards']);
+            } elseif ($settings['selected_deck'] == 'battlefield') {
+                $id = $value->battlefield[$card_idx]->id;
+                $value->move_card($value->battlefield, $card_idx, $value->private['discards']);
+            } else {
+                return;
+            }
+            $this->message_buffer[] = $value->alias . ' discarded ' . $id . '.';
+            break;
         }
     }
 }

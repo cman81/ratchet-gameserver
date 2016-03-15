@@ -165,5 +165,21 @@
                 ));
             }
         });
+        $('.game').on('click', 'input.discard', function() {
+            if ($('.selected.deck').html() == 'battlefield' || $('.selected.deck').html() == 'hand') {
+                conn.send(JSON.stringify(
+                    {
+                        "game": {
+                            "op" : "transaction",
+                            "actions": [{
+                                'action': 'discard',
+                                'card_index': $('.selected.index').html(),
+                                'selected_deck': $('.selected.deck').html()
+                            }]
+                        }
+                    }
+                ));
+            }
+        });
     });
 })(jQuery);
