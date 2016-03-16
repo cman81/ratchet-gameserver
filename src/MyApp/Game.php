@@ -91,6 +91,7 @@ class Game {
                     $value->move_card($value->private['hand'], $card_idx, $value->battlefield);
                     if ($id == 'green-2-tech0-young-treant') {
                         $value->draw_card();
+                        $this->message_buffer[] = $value->alias . ' draws a card since ' . $id . ' arrived!';
                     }
                 } elseif ($settings['selected_deck'] == 'heroes') {
                     $cost = $value->heroes[$card_idx]->cost;
