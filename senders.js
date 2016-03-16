@@ -193,5 +193,35 @@
                 }
             ));
         });
+        $('.game').on('click', '.add-damage', function() {
+            conn.send(JSON.stringify(
+                {
+                    "game": {
+                        "op" : "transaction",
+                        "actions": [{
+                            'action': 'add_damage',
+                            'selected_player': $('.selected.player').html(),
+                            'card_index': $('.selected.index').html(),
+                            'amount': 1
+                        }]
+                    }
+                }
+            ));
+        });
+        $('.game').on('click', '.remove-damage', function() {
+            conn.send(JSON.stringify(
+                {
+                    "game": {
+                        "op" : "transaction",
+                        "actions": [{
+                            'action': 'remove_damage',
+                            'selected_player': $('.selected.player').html(),
+                            'card_index': $('.selected.index').html(),
+                            'amount': 1
+                        }]
+                    }
+                }
+            ));
+        });
     });
 })(jQuery);

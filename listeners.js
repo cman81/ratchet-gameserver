@@ -131,7 +131,10 @@
                         $('.game .battlefield').eq(key).append(
                             '<div class="float-left card-container">' +
                                 '<img src="cards/' + v.img + '" class="card-thumb" />' +
-                                '<div class="info">Patrol: ' + v.patrol + '</div>' +
+                                '<div class="info">' +
+                                    '<div>Patrol: ' + v.patrol + '</div>' +
+                                    '<div>Damage: ' + v.damage + '</div>' +
+                                '</div>' +
                             '</div>');
                     }
                 }
@@ -169,6 +172,8 @@
                         '</select>' +
                         '<input type="button" class="patrol" value="Patrol" />' +
                         '<input type="button" class="discard" value="Discard" />' +
+                        '<input type="button" class="add-damage" value="Add 1 Damage" />' +
+                        '<input type="button" class="remove-damage" value="Remove 1 Damage" />' +
                     '</p>');
                 $('.game div.actions').append(
                     '<p class="misc">Misc actions' +

@@ -89,6 +89,9 @@ class Game {
                     $cost = $value->private['hand'][$card_idx]->cost;
                     $id = $value->private['hand'][$card_idx]->id;
                     $value->move_card($value->private['hand'], $card_idx, $value->battlefield);
+                    if ($id == 'green-2-tech0-young-treant') {
+                        $value->draw_card();
+                    }
                 } elseif ($settings['selected_deck'] == 'heroes') {
                     $cost = $value->heroes[$card_idx]->cost;
                     $id = $value->heroes[$card_idx]->id;
@@ -138,6 +141,7 @@ class Game {
                 $value->move_card($value->private['hand'], $card_idx, $value->private['discards']);
             } elseif ($settings['selected_deck'] == 'battlefield') {
                 $id = $value->battlefield[$card_idx]->id;
+                $value->battlefield[$card_idx]->damage = 0;
                 $value->move_card($value->battlefield, $card_idx, $value->private['discards']);
             } else {
                 return;
@@ -155,5 +159,19 @@ class Game {
                 break;
             }
         }
+    }
+    function action_add_damage($from, $settings) {
+        $amt = $settings['amount'];
+        $selected_player = $settings['selected_player'];
+        $card_idx = intval($settings['card_index']);
+        $this->players[$selected_player]->battlefield[$card_idx]->damage += $amt;
+        $this->message_buffer[] = $this->players[$selected_player]->battlefield[$card_idx]->id . ' took ' . $amt . ' damage.';
+    }
+    function action_remove_damage($from, $settings) {
+        $amt = $settings['amount'];
+        $selected_player = $settings['selected_player'];
+        $card_idx = intval($settings['card_index']);
+        $this->players[$selected_player]->battlefield[$card_idx]->damage -= $amt;
+        $this->message_buffer[] = $this->players[$selected_player]->battlefield[$card_idx]->id . ' healed from ' . $amt . ' damage.';
     }
 }

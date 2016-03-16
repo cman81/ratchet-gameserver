@@ -13,6 +13,7 @@ class Card {
     public $id;
     public $img;
     public $cost = 0;
+    public $damage = 0;
     public $tags = array();
 
     public function __construct($img) {
