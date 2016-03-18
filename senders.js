@@ -35,7 +35,7 @@
                 }
             ));
         });
-        $('.game').on('click', '.start-game', function(ev) {
+        $('.lobby').on('click', '.start-game', function(ev) {
             ev.preventDefault();
             conn.send(JSON.stringify(
                 {

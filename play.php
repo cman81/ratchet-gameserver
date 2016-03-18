@@ -43,8 +43,60 @@
             <option value="mono_blue">Mono Blue: Law, Peace, Truth</option>
         </select>
     </div>
+    <div class="lobby float-left">
+        Welcome to Codex!
+    </div>
     <div class="game float-left">
-        Welcome to RPS! Rock, Paper, Scissors
+        <h2 class="stats">Stats <span class="whos-turn"></span> <span class="gold"></span></h2>
+        <div class="stats"></div>
+        <h2 class="heroes">Heroes</h2>
+        <div class="heroes clearfix"></div>
+        <h2 class="table">Table</h2>
+        <div class="table clearfix"></div>
+        <h2 class="hand">Hand (<span class="size"></span>)</h2>
+        <div class="hand clearfix"></div>
+        <h2 class="actions">Actions</h2>
+        <div class="actions">
+            <p class="main">
+                Game actions:
+                <input type="button" class="gain-upkeep-gold" value="Gain Upkeep Gold" />
+                <input type="button" class="discard-redraw" value="Discard/Draw Hand" />
+                <input type="button" class="end-turn" value="End Turn" />
+            </p>
+            <p class="card">
+                Card: Player <span class="selected player">0</span> <span class="selected deck">hand</span>[<span class="selected index">0</span>] actions:
+                <input type="button" class="recruit-worker" value="Recruit Worker" />
+                <input type="button" class="deploy" value="Deploy to Table" />
+                <select class="patrol">
+                    <option>None</option>
+                    <option>Squad Leader</option>
+                    <option>Elite</option>
+                    <option>Scavenger</option>
+                    <option>Technician</option>
+                    <option>Lookout</option>
+                    </select>
+                <input type="button" class="patrol" value="Patrol" />
+                <input type="button" class="discard" value="Discard" />
+                <input type="button" class="add-damage" value="Add 1 Damage" />
+                <input type="button" class="remove-damage" value="Remove 1 Damage" />
+            </p>
+            <p class="misc">
+                Misc actions
+                <input type="button" class="gain-gold" value="Gain 1 Gold" />
+                <input type="button" class="spend-gold hide-if-broke" value="Spend 1 Gold" />
+                <input type="button" class="draw" value="Draw a Card" />
+            </p>
+            <input type="button" class="tech" value="Tech from Codex" />
+        </div>
+        <h2 class="misc">Misc</h2>
+        <div class="misc">
+            <h2 class="discards">Discards (<span class="size"></span>)</h2>
+            <div class="discards"><select class="discards" name="discards"></select></div>
+            <h2 class="workers">Workers (<span class="size"></span>)</h2>
+            <div class="workers"><select class="workers" name="workers"></select></div>
+            <h2 class="codex">Codex (<span class="size"></span>)</h2>
+            <div class="codex"><select class="codex" name="codex"></select></div>
+        </div>
     </div>
     <div class="chat float-left">
         <div class="output"></div>

@@ -37,7 +37,11 @@ body {
 .message {
   width: 90%; }
 
+.lobby {
+  width: 80%; }
+
 .game {
+  display: none;
   width: 80%; }
   .game pre {
     max-height: 50vh;

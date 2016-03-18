@@ -66,16 +66,18 @@
                 }
                 if (typeof(response.game) != "undefined" && response.game !== null) {
                     if (!response.game.is_started) {
-                        $('.game').html('<p>Players:' + getPlayers(response.game) + '</p>');
+                        $('.lobby').html('<p>Players:' + getPlayers(response.game) + '</p>');
                         if (response.game.players.length >= response.game.min_players) {
-                            $('.game').append('<a href="#" class="start-game">Start Game</a>');
+                            $('.lobby').append('<a href="#" class="start-game">Start Game</a>');
                         } else {
-                            $('.game').append('<p>Waiting for other players...</p>');
+                            $('.lobby').append('<p>Waiting for other players...</p>');
                         }
+                        $('.lobby').show();
+                        $('.game').hide();
                     } else {
                         drawGameState(response.game);
-                        presentActions(response.game);
-                        $('.game').accordion('refresh');
+                        $('.lobby').hide();
+                        $('.game').show();
                     }
                     for (var key in response.messages) {
                         var value = response.messages[key];
@@ -90,39 +92,28 @@
             // TODO: how do I put the below functions in a separate file?
             function drawGameState(game) {
                 var me = game.players[game.me];
-                $('.game').html('' +
-                    '<h2 class="stats">Stats</h2><div class="stats"></div>' +
-                    '<h2 class="heroes">Heroes</h2><div class="heroes clearfix"></div>' +
-                    '<h2 class="table">Table</h2><div class="table clearfix"></div>' +
-                    '<h2 class="hand">Hand</h2><div class="hand clearfix"></div>' +
-                    '<h2 class="actions">Actions</h2><div class="actions"></div>' +
-                    '<h2 class="misc">Misc</h2><div class="misc">' +
-                        '<h2 class="discards">Discards</h2><div class="discards"><select class="discards" name="discards"></select></div>' +
-                        '<h2 class="workers">Workers</h2><div class="workers"><select class="workers" name="workers"></select></div>' +
-                        '<h2 class="codex">Codex</h2><div class="codex"><select class="codex" name="codex"></select></div>' +
-                    '</div>');
+
+                // stats
+                $('.game h2.stats .whos-turn').empty();
                 if (game.me == game.whos_turn) {
-                    $('.game h2.stats').append(' (My Turn)');
+                    $('.game h2.stats .whos-turn').html('(My Turn)');
                 }
-                $('.game h2.stats').append(' ' + me.gold + ' gold');
+                $('.game h2.stats .gold').html(me.gold + ' gold');
+                $('.game div.stats').empty();
                 $('.game div.stats').append('<div>Base HP: ' + me.buildings.base.hp + '</div>');
                 $('.game div.stats').append('<div>Workers: <span class="total-workers">' + me.workers + '</span></div>');
                 $('.game div.stats').append('<div>Gold: <span class="total-gold">' + me.gold + '</span></div>');
                 $('.game div.stats').append('<div>Deck: ' + me.deck_count + ' Card' + ((me.deck_count == 1) ? '' : 's') + '</div>');
+
+                // heroes
+                $('.game div.heroes').empty();
                 for (var key in me.heroes) {
                     var value = me.heroes[key];
                     $('.game div.heroes').append('<img src="cards/' + value.img + '" class="float-left card-thumb ' + value.status + '" />');
                 }
-                $('.game h2.hand').append(' (' + me.private.hand.length + ')');
-                for (var key in me.private.hand) {
-                    var value = me.private.hand[key];
-                    $('.game div.hand').append('<img src="cards/' + value.img + '" class="float-left card-thumb" />');
-                }
-                $('.game h2.workers').append(' (' + me.private.workers.length + ')');
-                for (var key in me.private.workers) {
-                    var value = me.private.workers[key];
-                    $('.game select.workers').append('<option value="' + key + '">' + value.id + '</option>');
-                }
+
+                // table
+                $('.game div.table').empty();
                 for (var key in game.players) {
                     var value = game.players[key];
                     $('.game div.table').append('<div class="battlefield' + ((game.me == key) ? ' me' : '') + ' clearfix"><h2>' + value.alias + '</h2></div>');
@@ -130,58 +121,43 @@
                         var v = value.battlefield[k];
                         $('.game .battlefield').eq(key).append(
                             '<div class="float-left card-container">' +
-                                '<img src="cards/' + v.img + '" class="card-thumb" />' +
-                                '<div class="info">' +
-                                    '<div>Patrol: ' + v.patrol + '</div>' +
-                                    '<div>Damage: ' + v.damage + '</div>' +
-                                '</div>' +
+                            '<img src="cards/' + v.img + '" class="card-thumb" />' +
+                            '<div class="info">' +
+                            '<div>Patrol: ' + v.patrol + '</div>' +
+                            '<div>Damage: ' + v.damage + '</div>' +
+                            '</div>' +
                             '</div>');
                     }
                 }
-                $('.game h2.codex').append(' (' + me.private.codex.length + ')');
+
+                // hand
+                $('.game h2.hand .size').html(me.private.hand.length);
+                $('.game div.hand').empty();
+                for (var key in me.private.hand) {
+                    var value = me.private.hand[key];
+                    $('.game div.hand').append('<img src="cards/' + value.img + '" class="float-left card-thumb" />');
+                }
+
+                // misc
+                $('.game h2.workers .size').html(me.private.workers.length);
+                $('.game select.workers').empty();
+                for (var key in me.private.workers) {
+                    var value = me.private.workers[key];
+                    $('.game select.workers').append('<option value="' + key + '">' + value.id + '</option>');
+                }
+                $('.game h2.codex .size').html(me.private.codex.length);
+                $('.game select.codex').empty();
                 for (var key in me.private.codex) {
                     var value = me.private.codex[key];
                     $('.game select.codex').append('<option value="' + key + '">' + value.id + '</option>');
                 }
                 $('.game h2.discards').append(' (' + me.private.discards.length + ')');
+                $('.game select.discards').empty();
                 for (var key in me.private.discards) {
                     var value = me.private.discards[key];
                     $('.game select.discards').append('<option value="' + key + '">' + value.id + '</option>');
                 }
                 console.log(game);
-            }
-
-            function presentActions(game) {
-                $('.game div.actions').append(
-                    '<p class="main">Game actions:' +
-                        '<input type="button" class="gain-upkeep-gold" value="Gain Upkeep Gold" />' +
-                        '<input type="button" class="discard-redraw" value="Discard/Draw Hand" />' +
-                        '<input type="button" class="end-turn" value="End Turn" />' +
-                    '</p>');
-                $('.game div.actions').append(
-                    '<p class="card">Card: Player <span class="selected player">0</span> <span class="selected deck">hand</span>[<span class="selected index">0</span>] actions:' +
-                        '<input type="button" class="recruit-worker" value="Recruit Worker" />' +
-                        '<input type="button" class="deploy" value="Deploy to Table" />' +
-                        '<select class="patrol">' +
-                            '<option>None</option>' +
-                            '<option>Squad Leader</option>' +
-                            '<option>Elite</option>' +
-                            '<option>Scavenger</option>' +
-                            '<option>Technician</option>' +
-                            '<option>Lookout</option>' +
-                        '</select>' +
-                        '<input type="button" class="patrol" value="Patrol" />' +
-                        '<input type="button" class="discard" value="Discard" />' +
-                        '<input type="button" class="add-damage" value="Add 1 Damage" />' +
-                        '<input type="button" class="remove-damage" value="Remove 1 Damage" />' +
-                    '</p>');
-                $('.game div.actions').append(
-                    '<p class="misc">Misc actions' +
-                        '<input type="button" class="gain-gold" value="Gain 1 Gold" />' +
-                        '<input type="button" class="spend-gold hide-if-broke" value="Spend 1 Gold" />' +
-                        '<input type="button" class="draw" value="Draw a Card" />' +
-                    '</p>');
-                $('.game div.codex').append('<input type="button" class="tech" value="Tech from Codex" />');
             }
         });
     });
